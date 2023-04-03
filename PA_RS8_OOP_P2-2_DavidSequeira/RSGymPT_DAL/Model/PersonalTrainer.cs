@@ -1,0 +1,52 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace RSGymPT_DAL.Model
+{
+    public class PersonalTrainer
+    {
+        #region Scalar Properties
+
+        public int PersonalTrainerID { get; set; }
+        public int LocationID { get; set; }
+
+        [Required]
+        [StringLength(maximumLength: 4, MinimumLength = 4, ErrorMessage = "The Code must have 4 characters.")]
+        public string Code { get; set; }
+
+        [Required]
+        [MaxLength(100, ErrorMessage = "100 character limit.")]
+        public string Name { get; set; }
+
+        [Required]
+        [StringLength(maximumLength: 9, MinimumLength = 9, ErrorMessage = "The NIF must have 9 numbers.")]
+        public string NIF { get; set; }
+
+        [Required]
+        [DataType(DataType.PhoneNumber)]
+        [StringLength(maximumLength: 9, MinimumLength = 9, ErrorMessage = "The Phone Number must have 9 digits.")]
+        public string PhoneNumber { get; set; }
+
+        [Required]
+        [DataType(DataType.EmailAddress)]
+        public string Email { get; set; }
+
+        [Required]
+        [MaxLength(100, ErrorMessage = "100 character limit.")]
+        public string Address { get; set; }
+
+        #endregion
+
+        #region Navigation Porperties
+
+        public virtual ICollection<Client> Clients { get; set; }
+        public virtual Location Location { get; set; }
+        public virtual ICollection<Request> Requests { get; set; }
+        #endregion
+
+    }
+}
