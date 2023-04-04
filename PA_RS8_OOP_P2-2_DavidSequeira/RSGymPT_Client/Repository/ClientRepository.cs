@@ -16,9 +16,9 @@ namespace RSGymPT_Client.Repository
             {
                 IList<Client> clients = new List<Client>()
                 {
-                    new Client() {PersonalTrainerID = 1, LocationID = 2, Name = "Eurico Ferreira", BirthDate = new DateTime(1985, 03, 09), NIF = "100000003", PhoneNumber = "910000002", Email = "ef@email.com", Address = "Rua C, nº3", StatusClient = Client.EnumStatusClient.Active},
-                    new Client() {PersonalTrainerID = 2, LocationID = 3, Name = "Luís Ferreira", BirthDate = new DateTime(1985, 03, 09), NIF = "100000004", PhoneNumber = "910000003", Email = "lf@email.com", Address = "Rua D, nº4", StatusClient = Client.EnumStatusClient.Active},
-                    new Client() {PersonalTrainerID = 1, LocationID = 1, Name = "Joaquim Alves", BirthDate = new DateTime(1970, 09, 02), NIF = "100000005", PhoneNumber = "910000004", Email = "ja@email.com", Address = "Rua E, nº5", StatusClient = Client.EnumStatusClient.Active}
+                    new Client() {PersonalTrainerID = 1, LocationID = 2, Name = "Eurico Ferreira", BirthDate = new DateTime(1985, 03, 09), NIF = "100000003", PhoneNumber = "910000002", Email = "ef@email.com", Address = "Rua C, nº3", Status = Client.EnumStatusClient.Active.ToString()},
+                    new Client() {PersonalTrainerID = 2, LocationID = 3, Name = "Luís Ferreira", BirthDate = new DateTime(1985, 03, 09), NIF = "100000004", PhoneNumber = "910000003", Email = "lf@email.com", Address = "Rua D, nº4", Status = Client.EnumStatusClient.Active.ToString()},
+                    new Client() {PersonalTrainerID = 1, LocationID = 1, Name = "Joaquim Alves", BirthDate = new DateTime(1970, 09, 02), NIF = "100000005", PhoneNumber = "910000004", Email = "ja@email.com", Address = "Rua E, nº5", Status = Client.EnumStatusClient.Active.ToString()}
                 };
 
                 db.Client.AddRange(clients);
@@ -28,15 +28,29 @@ namespace RSGymPT_Client.Repository
 
         public static void ReadClient()
         {
+            Console.Clear();
+            Utility.WriteTitle("List of Clients");
+
             using (var db = new RSGymContext())
             {
                 var queryClient = db.Client
                     .Select(x => x)
-                    .Where(x => x.StatusClient == Client.EnumStatusClient.Active)
+                    .Where(x => x.Status == Client.EnumStatusClient.Active.ToString())
                     .OrderBy(x => x.Name);
 
 
-                queryClient.ToList().ForEach(x => Utility.WriteMessage($"ID: {x.ClientID} | Personal Trainer ID: {x.PersonalTrainerID} | Location ID: {x.LocationID} | Name: {x.Name} | Date of Birth: {x.BirthDate} | NIF: {x.NIF} | Phone Number: {x.PhoneNumber} | Email: {x.Email} | Address: {x.Address} | Status: {x.StatusClient} | Observations: {x.Observation}", "", "\n"));
+                queryClient.ToList().ForEach(x => Utility.WriteMessage(
+                        $"ID: {x.ClientID}\n" +
+                        $"Personal Trainer ID: {x.PersonalTrainerID}\n" +
+                        $"Location ID: {x.LocationID}\n" +
+                        $"Name: {x.Name}\n" +
+                        $"Date of Birth: {x.BirthDate}\n" +
+                        $"NIF: {x.NIF}\n" +
+                        $"Phone Number: {x.PhoneNumber}\n" +
+                        $"Email: {x.Email}\n" +
+                        $"Address: {x.Address}\n" +
+                        $"Status: {x.Status}\n" +
+                        $"Observations: {x.Observation}", "", "\n\n\n"));
             }
         }
 
@@ -118,7 +132,7 @@ namespace RSGymPT_Client.Repository
                         PhoneNumber = phone,
                         Email = email,
                         Address = address,
-                        StatusClient = Client.EnumStatusClient.Active,
+                        Status = Client.EnumStatusClient.Active.ToString(),
                         Observation = obs
                     }
                 };
@@ -128,7 +142,7 @@ namespace RSGymPT_Client.Repository
             }
         }
 
-        public static void DeleteClient()   // ToDo: Rever nome deste método pois não vai fazer Delete, mas sim Alterar o Status do cliente -> InactivateClient
+        public static void ChangeStatusClient()   // ToDo: Decidi dar o nome de ChangeStatusClient (em vez de DeleteClient, como seria lógico em CRUD), por não estarmos a apagar um cliente, mas sim a alterar o status.
         {
             Console.Write("Please insert the Client ID ");
             int id = Convert.ToInt16(Console.ReadLine());       // ToDo: rever validação de int.
@@ -141,7 +155,7 @@ namespace RSGymPT_Client.Repository
 
                 if (queryClient != null)
                 {
-                    queryClient.StatusClient = Client.EnumStatusClient.Inactive;
+                    queryClient.Status = Client.EnumStatusClient.Inactive.ToString();
                     db.SaveChanges();
                 }
             }
@@ -160,7 +174,7 @@ namespace RSGymPT_Client.Repository
 
                 if (queryClient != null)
                 {
-                    queryClient.StatusClient = Client.EnumStatusClient.Active;
+                    queryClient.Status = Client.EnumStatusClient.Active.ToString();
                     db.SaveChanges();
                 }
             }

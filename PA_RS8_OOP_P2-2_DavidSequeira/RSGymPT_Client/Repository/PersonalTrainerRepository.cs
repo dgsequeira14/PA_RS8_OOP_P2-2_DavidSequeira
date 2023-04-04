@@ -28,13 +28,26 @@ namespace RSGymPT_Client.Repository
 
         public static void ReadPT()
         {
+            Console.Clear();
+            Utility.WriteTitle("List of Personal Trainers");
+
             using (var db = new RSGymContext())
             {
                 var queryPT = db.PersonalTrainer
                     .Select(x => x)
                     .OrderBy(x => x.Name);
 
-                queryPT.ToList().ForEach(x => Utility.WriteMessage($"ID: {x.PersonalTrainerID} | Location ID: {x.LocationID} | Code: {x.Code} | Name: {x.Name} | NIF: {x.NIF} | Phone Number: {x.PhoneNumber} | Email: {x.Email} | Address: {x.Address}", "", "\n"));
+                queryPT.ToList().ForEach(x => Utility.WriteMessage(
+                    $"ID: {x.PersonalTrainerID}\n" +
+                    $"Location ID: {x.LocationID}\n" +
+                    $"Code: {x.Code}\n" +
+                    $"Name: {x.Name}\n" +
+                    $"NIF: {x.NIF}\n" +
+                    $"Phone Number: {x.PhoneNumber}\n" +
+                    $"Email: {x.Email}\n" +
+                    $"Address: {x.Address} \n", "", "\n\n\n")); 
+                    
+
             }
         }
 

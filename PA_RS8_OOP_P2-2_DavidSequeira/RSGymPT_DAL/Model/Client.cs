@@ -48,7 +48,7 @@ namespace RSGymPT_DAL.Model
         [MaxLength(100, ErrorMessage = "100 character limit.")]
         public string Address { get; set; }
 
-        public EnumStatusClient StatusClient { get; set; }
+        public string Status { get; set; }
 
         [MaxLength(255, ErrorMessage = "255 character limit.")]
         public string Observation { get; set; }

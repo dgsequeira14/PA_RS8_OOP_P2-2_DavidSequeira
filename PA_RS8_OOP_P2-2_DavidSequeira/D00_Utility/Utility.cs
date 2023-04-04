@@ -6,15 +6,9 @@ namespace D00_Utility
     public static class Utility
     {
 
-        // Encoding da consola, i.e, preparar a consola para receber caractéres especiais.
         public static void SetUnicodeConsole()
         {
-
-            // Console.WriteLine("á Á à À ã Ã â Â ç Ç º ª");
-
             Console.OutputEncoding = Encoding.UTF8;
-
-            // Console.WriteLine("á Á à À ã Ã â Â ç Ç º ª");
         }
 
         public static void WriteTitle(string title)

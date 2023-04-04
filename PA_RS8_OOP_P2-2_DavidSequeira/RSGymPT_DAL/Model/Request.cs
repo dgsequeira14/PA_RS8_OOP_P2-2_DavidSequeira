@@ -32,7 +32,7 @@ namespace RSGymPT_DAL.Model
         [DataType(DataType.Time, ErrorMessage = "The time must be in the format hh:mm")]
         public DateTime Hour { get; set; }
 
-        public EnumStatusRequest StatusRequest { get; set; }
+        public string Status { get; set; }
 
         [MaxLength(255, ErrorMessage = "255 character limit.")]
         public string Observation { get; set; }

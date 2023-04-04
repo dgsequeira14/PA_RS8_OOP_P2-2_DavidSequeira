@@ -29,6 +29,9 @@ namespace RSGymPT_Client.Repository
 
         public static void ReadLocation()
         {
+            Console.Clear();
+            Utility.WriteTitle("List of Locations");
+
             using (var db = new RSGymContext())
             {
                 var queryLocation = db.Location

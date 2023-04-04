@@ -51,6 +51,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Migrations\202304041354021_M01Initial.cs" />
+    <Compile Include="Migrations\202304041354021_M01Initial.designer.cs">
+      <DependentUpon>202304041354021_M01Initial.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Model\Client.cs" />
     <Compile Include="Model\Location.cs" />
     <Compile Include="Model\PersonalTrainer.cs" />
@@ -68,6 +73,11 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\202304041354021_M01Initial.resx">
+      <DependentUpon>202304041354021_M01Initial.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using D00_Utility;
 using System.Collections.Specialized;
 using System.Data.Common;
+using System.ComponentModel.Design;
 
 namespace RSGymPT_Client.Repository
 {
@@ -30,13 +31,20 @@ namespace RSGymPT_Client.Repository
 
         public static void ReadUser()
         {
+            Console.Clear();
+            Utility.WriteTitle("List of Users");
+
             using (var db = new RSGymContext())
             {
                 var queryUser = db.User
                     .Select(x => x)
                     .OrderBy(x => x.Code);
 
-                queryUser.ToList().ForEach(x => Utility.WriteMessage($"ID: {x.UserID} | Name: {x.Name} | Code: {x.Code} | Profile: {x.Profile}", "", "\n"));
+                queryUser.ToList().ForEach(x => Utility.WriteMessage(
+                    $"ID: {x.UserID}\n" +
+                    $"Name: {x.Name}\n" +
+                    $"Code: {x.Code}\n" +
+                    $"Profile: {x.Profile}", "", "\n\n\n"));
             }
         }
 
@@ -96,6 +104,66 @@ namespace RSGymPT_Client.Repository
                 db.User.AddRange(users);
                 db.SaveChanges();
             }
+        }
+
+        public static (string, string) ReadCredentials()
+        {
+            Console.Clear();
+            Utility.WriteTitle("Login Menu");
+
+            Console.Write("Please insert your Code: ");
+            string userName = Console.ReadLine();
+
+            Console.WriteLine("Please insert your Password: ");
+            string password = Console.ReadLine();
+
+            return (userName, password);
+        }
+
+        public static (string, string) ValidateCredentials((string, string) credentials)
+        {
+            string userName = FindUserName();
+            string password = FindPassword();
+
+            string FindUserName()
+            {
+                using (var db = new RSGymContext())
+                {
+                    var queryCredentials = db.User
+                        .Select(x => x)
+                        .FirstOrDefault(x => x.Code == credentials.Item1);
+
+                    if (queryCredentials != null)
+                    {
+                        return "Code valid";
+                    }
+                    else
+                    {
+                        return "Code not valid! Please try again.";
+                    }
+                }
+            }
+
+            string FindPassword()
+            {
+                using (var db = new RSGymContext())
+                {
+                    var queryCredentials = db.User
+                        .Select(x => x)
+                        .FirstOrDefault(x => x.Code == credentials.Item2);
+
+                    if (queryCredentials != null)
+                    {
+                        return "Password valid.";
+                    }
+                    else
+                    {
+                        return "Password not valid! Please try again.";
+                    }
+                }
+            }
+
+            return(userName, password);
         }
     }
 }

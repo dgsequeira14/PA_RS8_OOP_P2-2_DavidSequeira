@@ -16,9 +16,9 @@ namespace RSGymPT_Client.Repository
             {
                 IList<Request> requests = new List<Request>()
                 {
-                    new Request { ClientID = 1, PersonalTrainerID = 1, Date = new DateTime(2023, 06, 10) , Hour = new DateTime( 2023, 06, 10, 10, 00, 00), StatusRequest = Request.EnumStatusRequest.Booked },
-                    new Request { ClientID = 2, PersonalTrainerID = 2, Date = new DateTime(2023, 06, 12), Hour = new DateTime(2023, 06, 12, 12, 00, 00), StatusRequest = Request.EnumStatusRequest.Booked },
-                    new Request { ClientID = 3, PersonalTrainerID = 1, Date = new DateTime(2023, 04, 25), Hour = new DateTime(2023, 04, 25, 16, 00, 00) , StatusRequest = Request.EnumStatusRequest.Booked }
+                    new Request { ClientID = 1, PersonalTrainerID = 1, Date = new DateTime(2023, 06, 10) , Hour = new DateTime( 2023, 06, 10, 10, 00, 00), Status = Request.EnumStatusRequest.Booked.ToString() },
+                    new Request { ClientID = 2, PersonalTrainerID = 2, Date = new DateTime(2023, 06, 12), Hour = new DateTime(2023, 06, 12, 12, 00, 00), Status = Request.EnumStatusRequest.Booked.ToString() },
+                    new Request { ClientID = 3, PersonalTrainerID = 1, Date = new DateTime(2023, 04, 25), Hour = new DateTime(2023, 04, 25, 16, 00, 00) , Status = Request.EnumStatusRequest.Booked.ToString() }
                 };
 
                 db.Request.AddRange(requests);
@@ -28,15 +28,24 @@ namespace RSGymPT_Client.Repository
 
         public static void ReadRequest()
         {
+            Console.Clear();
+            Utility.WriteTitle("List of Requests");
+
             using (var db = new RSGymContext())
             {
                 var queryRequest = db.Request
                     .Select(x => x)
-                    .OrderBy(x => x.StatusRequest)
+                    .OrderBy(x => x.Status)
                     .ThenBy(x => x.Date)
                     .ThenBy(x => x.Hour);
 
-                queryRequest.ToList().ForEach(x => Utility.WriteMessage($"ID: {x.RequestID} | Client ID: {x.ClientID} | Personal Trainer ID: {x.PersonalTrainerID}| Date: {x.Date.ToShortDateString()} - Hour: {x.Hour.ToShortTimeString()} | Status: {x.StatusRequest} | Observations: {x.Observation}"));
+                queryRequest.ToList().ForEach(x => Utility.WriteMessage(
+                    $"ID: {x.RequestID}\n" +
+                    $"Client ID: {x.ClientID}\n" +
+                    $"Personal Trainer ID: {x.PersonalTrainerID}\n" +
+                    $"Date: {x.Date.ToShortDateString()} - Hour: {x.Hour.ToShortTimeString()}\n" +
+                    $"Status: {x.Status}\n" +
+                    $"Observations: {x.Observation}", "", "\n\n\n"));
             }
 
         }
@@ -101,7 +110,7 @@ namespace RSGymPT_Client.Repository
                         PersonalTrainerID = ptID,
                         Date = date,
                         Hour = hour,
-                        StatusRequest = Request.EnumStatusRequest.Booked
+                        Status = Request.EnumStatusRequest.Booked.ToString()
                     }
                 };
 
