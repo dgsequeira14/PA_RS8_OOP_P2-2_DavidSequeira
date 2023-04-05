@@ -45,7 +45,7 @@ namespace RSGymPT_Client.Repository
                     $"Personal Trainer ID: {x.PersonalTrainerID}\n" +
                     $"Date: {x.Date.ToShortDateString()} - Hour: {x.Hour.ToShortTimeString()}\n" +
                     $"Status: {x.Status}\n" +
-                    $"Observations: {x.Observation}", "", "\n\n\n"));
+                    $"Observations: {x.Observation}", "", "\n\n"));
             }
 
         }
@@ -84,15 +84,18 @@ namespace RSGymPT_Client.Repository
 
         }
 
-        public static void CreateNewRequest()       // ToDo: Rever inserção de FK's na criação pela consola!!! -> possivelmnente terei que validar existencia de client e pt id's na bd.
+        public static void CreateNewRequest()
         {
+            ClientRepository.ReadClient();          // ToDO: Para facilitar a introdução das FK, mostro a lista de Client e Personal Trainer
+            PersonalTrainerRepository.ReadPT();
+
             Console.WriteLine("Please fill the following fields with the Request's details: \n");
 
             Console.Write("Client ID: ");
-            int clientID = Convert.ToInt16(Console.ReadLine());
-
+            int.TryParse(Console.ReadLine(), out int clientID);
+            
             Console.Write("PT ID: ");
-            int ptID = Convert.ToInt16(Console.ReadLine());
+            int.TryParse(Console.ReadLine(), out int ptID);
 
             Console.Write("Date (dd/mm/yyyy): ");
             DateTime date = Convert.ToDateTime(Console.ReadLine());

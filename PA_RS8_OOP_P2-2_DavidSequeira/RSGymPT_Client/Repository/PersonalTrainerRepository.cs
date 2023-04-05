@@ -1,4 +1,5 @@
 ﻿using D00_Utility;
+using RSGymPT_Client.Class;
 using RSGymPT_DAL.Model;
 using System;
 using System.Collections.Generic;
@@ -16,8 +17,8 @@ namespace RSGymPT_Client.Repository
             {
                 IList<PersonalTrainer> personalTrainers = new List<PersonalTrainer>()
                 {
-                    new PersonalTrainer() { LocationID = 2, Code = "PT01", Name = "Inácio Silva", NIF = "100000001", PhoneNumber = "910000000", Email = "is@email.com", Address = "Rua A, nº1" },
-                    new PersonalTrainer() { LocationID = 1, Code = "PT02", Name = "José Pedro", NIF = "100000002", PhoneNumber = "910000001", Email = "jp@email.com", Address = "Rua B, nº2" }
+                    new PersonalTrainer() { LocationID = 2, Name = "Inácio Silva", NIF = "100000001", PhoneNumber = "910000000", Email = "is@email.com", Address = "Rua A, nº1" },
+                    new PersonalTrainer() { LocationID = 1, Name = "José Pedro", NIF = "100000002", PhoneNumber = "910000001", Email = "jp@email.com", Address = "Rua B, nº2" }
 
                 };
 
@@ -30,6 +31,8 @@ namespace RSGymPT_Client.Repository
         {
             Console.Clear();
             Utility.WriteTitle("List of Personal Trainers");
+
+            Validation.ShowLoggedUser();
 
             using (var db = new RSGymContext())
             {
@@ -45,18 +48,33 @@ namespace RSGymPT_Client.Repository
                     $"NIF: {x.NIF}\n" +
                     $"Phone Number: {x.PhoneNumber}\n" +
                     $"Email: {x.Email}\n" +
-                    $"Address: {x.Address} \n", "", "\n\n\n")); 
-                    
+                    $"Address: {x.Address} \n", "", "\n\n"));
+
 
             }
         }
 
-        public static void CreateNewPT(int locationID)
+        public static void CreateNewPT()
         {
+            Console.Clear();
+            Utility.WriteTitle("Create new PT");
+
+            Validation.ShowLoggedUser();
+
             Console.WriteLine("Please fill the following fields with the Personal Trainer's information: \n");
 
-            Console.Write("Code: ");
-            string code = Console.ReadLine();
+            int locationID = Validation.ValidateLocation();
+
+            bool loopLocal = false;
+            while (!loopLocal)
+            {
+                if (locationID == 0)
+                {
+                    Console.WriteLine("Location not found. You need to create a new Location first.\n");
+                    Validation.ValidateLocation();
+                    Utility_Menu.ReturnMenu();
+                }
+            }
 
             Console.Write("Name: ");
             string name = Console.ReadLine();
@@ -80,7 +98,6 @@ namespace RSGymPT_Client.Repository
                     new PersonalTrainer()
                     {
                         LocationID = locationID,
-                        Code = code,
                         Name = name,
                         NIF = nif,
                         PhoneNumber = phone,

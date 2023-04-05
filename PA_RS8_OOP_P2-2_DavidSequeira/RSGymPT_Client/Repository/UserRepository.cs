@@ -8,6 +8,7 @@ using D00_Utility;
 using System.Collections.Specialized;
 using System.Data.Common;
 using System.ComponentModel.Design;
+using RSGymPT_Client.Class;
 
 namespace RSGymPT_Client.Repository
 {
@@ -34,6 +35,8 @@ namespace RSGymPT_Client.Repository
             Console.Clear();
             Utility.WriteTitle("List of Users");
 
+            Validation.ShowLoggedUser();
+
             using (var db = new RSGymContext())
             {
                 var queryUser = db.User
@@ -44,15 +47,20 @@ namespace RSGymPT_Client.Repository
                     $"ID: {x.UserID}\n" +
                     $"Name: {x.Name}\n" +
                     $"Code: {x.Code}\n" +
-                    $"Profile: {x.Profile}", "", "\n\n\n"));
+                    $"Profile: {x.Profile}", "", "\n\n"));
             }
         }
 
-        public static void UpdateUser()     // ToDo: rever este update, não está correcto -> tenho que pedir o código do user quye vamos alterar a pass.
+        public static void UpdateUser()     // ToDo: Fazer loop
         {
+            Console.Clear();
+            Utility.WriteTitle("Update Password");
+
+            Validation.ShowLoggedUser();
+
             using (var db = new RSGymContext())
             {
-                Console.Write("Please insert the Code: ");
+                Console.Write("Please insert the Code of the User your wish to update the Password: ");
                 string code = Console.ReadLine();
 
                 Console.Write("Please insert the Password: ");
@@ -71,12 +79,21 @@ namespace RSGymPT_Client.Repository
                     db.SaveChanges();
 
                 }
+                else
+                {
+                    Console.WriteLine("Please try again.");
+                }
             }
 
         }
 
         public static void CreateNewUser()
         {
+            Console.Clear();
+            Utility.WriteTitle("Create new User");
+
+            Validation.ShowLoggedUser();
+
             Console.WriteLine("Please fill the following fields with the new User's information: \n");
 
             Console.Write("Name: ");
@@ -106,64 +123,5 @@ namespace RSGymPT_Client.Repository
             }
         }
 
-        public static (string, string) ReadCredentials()
-        {
-            Console.Clear();
-            Utility.WriteTitle("Login Menu");
-
-            Console.Write("Please insert your Code: ");
-            string userName = Console.ReadLine();
-
-            Console.WriteLine("Please insert your Password: ");
-            string password = Console.ReadLine();
-
-            return (userName, password);
-        }
-
-        public static (string, string) ValidateCredentials((string, string) credentials)
-        {
-            string userName = FindUserName();
-            string password = FindPassword();
-
-            string FindUserName()
-            {
-                using (var db = new RSGymContext())
-                {
-                    var queryCredentials = db.User
-                        .Select(x => x)
-                        .FirstOrDefault(x => x.Code == credentials.Item1);
-
-                    if (queryCredentials != null)
-                    {
-                        return "Code valid";
-                    }
-                    else
-                    {
-                        return "Code not valid! Please try again.";
-                    }
-                }
-            }
-
-            string FindPassword()
-            {
-                using (var db = new RSGymContext())
-                {
-                    var queryCredentials = db.User
-                        .Select(x => x)
-                        .FirstOrDefault(x => x.Code == credentials.Item2);
-
-                    if (queryCredentials != null)
-                    {
-                        return "Password valid.";
-                    }
-                    else
-                    {
-                        return "Password not valid! Please try again.";
-                    }
-                }
-            }
-
-            return(userName, password);
-        }
     }
 }

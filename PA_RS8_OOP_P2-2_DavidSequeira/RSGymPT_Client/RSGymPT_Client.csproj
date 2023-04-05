@@ -55,6 +55,7 @@
   <ItemGroup>
     <Compile Include="Class\InitialData.cs" />
     <Compile Include="Class\Utility_Menu.cs" />
+    <Compile Include="Class\Validation.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repository\ClientRepository.cs" />

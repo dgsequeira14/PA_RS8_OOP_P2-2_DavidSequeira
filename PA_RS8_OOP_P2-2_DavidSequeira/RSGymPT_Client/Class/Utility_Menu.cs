@@ -82,46 +82,57 @@ namespace RSGymPT_Client.Class
 
         }
 
-        internal static void MenuLogin()        // ToDo: Rever este Menu, não está funcional!!
+        internal static void MenuLogin()
         {
             Utility.WriteTitle("Hello! Welcome to RSGym!");
 
             bool loopLogin = false;
             while (!loopLogin)
             {
-                (string, string) credentials = UserRepository.ReadCredentials();
+                User existingUser = Validation.ValidateUserCredentials(Validation.ReadUserCredentials());
 
-                try
+                if (existingUser != null)
                 {
-                    (string, string) existingUser = UserRepository.ValidateCredentials(credentials);
-                    Console.WriteLine($"Hello {existingUser.Item1}. Welcome to RSGym!");
+                    Validation.LogginMessage(existingUser.Name);
+                    // Console.WriteLine($"\nHello {existingUser.Name}. Welcome to RSGym!\n");
+                    Console.WriteLine($"You are logged as {existingUser.Profile}");
                     Console.ReadKey();
 
-                    MenuApp();
-
+                    if (existingUser.Profile == User.EnumProfile.Administrator)
+                    {
+                        MenuApp();
+                    }
+                    else
+                    {
+                        MenuAppCollab();
+                    }
                     loopLogin = true;
                 }
-                catch (Exception)
+                else
                 {
 
-                    Console.WriteLine($"Login failed! Please try again.");
+                    Console.WriteLine($"\nLogin failed! Please try again.");
+                    Console.ReadKey();
                 }
             }
         }
-                  
+
         internal static void MenuApp()
         {
             Console.Clear();
             Utility.WriteTitle("RS GYM - Office");
 
+            Validation.ShowLoggedUser();
+
             Console.WriteLine("Choose one of the following options: \n");
 
-            string[,] menuApp = new string[5, 2]
+            string[,] menuApp = new string[6, 2]
                 {
                     {"1", " - User" },
                     {"2", " - Client" },
                     {"3", " - Personal Trainer" },
                     {"4", " - Request" },
+                    {"5", " - Location" },
                     {"0", " - Logout" }
                 };
 
@@ -164,6 +175,10 @@ namespace RSGymPT_Client.Class
                         MenuRequest();
                         loopApp = true;
                         break;
+                    case "5":
+                        MenuLocation();
+                        loopApp = true;
+                        break;
                     case "0":
                         Console.WriteLine("We're sorry to see you leaving!");
                         Console.WriteLine("Thank you for using the RSGym App!");
@@ -195,11 +210,13 @@ namespace RSGymPT_Client.Class
 
 
         }
-                  
+
         internal static void MenuUser()
         {
             Console.Clear();
             Utility.WriteTitle("User");
+
+            Validation.ShowLoggedUser();
 
             Console.WriteLine("Choose one of the following options: \n");
 
@@ -284,11 +301,13 @@ namespace RSGymPT_Client.Class
                 }
             }
         }
-                  
+
         internal static void MenuClient()
         {
             Console.Clear();
             Utility.WriteTitle("Client");
+
+            Validation.ShowLoggedUser();
 
             Console.WriteLine("Choose one of the following options: \n");
 
@@ -331,7 +350,7 @@ namespace RSGymPT_Client.Class
                     case "1":
                         Console.Clear();
 
-                        // ClientRepository.CreateNewClient();  // ToDo: Rever como receber parametros necessários.
+                        ClientRepository.CreateNewClient();
 
                         ReturnMenu();
                         loopClient = true;
@@ -354,7 +373,8 @@ namespace RSGymPT_Client.Class
                         break;
                     case "4":
                         Console.Clear();
-                        ClientRepository.DeleteClient();
+
+                        MenuChangeStatus();
 
                         ReturnMenu();
                         loopClient = true;
@@ -380,11 +400,13 @@ namespace RSGymPT_Client.Class
                 }
             }
         }
-                  
+
         internal static void MenuPersonalTrainer()
         {
             Console.Clear();
             Utility.WriteTitle("Personal Trainer");
+
+            Validation.ShowLoggedUser();
 
             Console.WriteLine("Choose one of the following options: \n");
 
@@ -426,7 +448,7 @@ namespace RSGymPT_Client.Class
                     case "1":
                         Console.Clear();
 
-                        // PersonalTrainerRepository.CreateNewPT();     // ToDo: Rever como receber parametros necessários.
+                        PersonalTrainerRepository.CreateNewPT();
 
                         ReturnMenu();
                         loopPT = true;
@@ -439,7 +461,6 @@ namespace RSGymPT_Client.Class
                         ReturnMenu();
                         loopPT = true;
                         break;
-
                     default:
                         Console.Write("\nInvalid option! Please try again. ");
                         Console.ReadKey();
@@ -459,10 +480,8 @@ namespace RSGymPT_Client.Class
                         break;
                 }
             }
-
-
         }
-                  
+
         internal static void MenuRequest()
         {
             bool loopRequest = false;
@@ -470,6 +489,8 @@ namespace RSGymPT_Client.Class
             {
                 Console.Clear();
                 Utility.WriteTitle("Request");
+
+                Validation.ShowLoggedUser();
 
                 Console.WriteLine("Choose one of the following options: \n");
 
@@ -497,7 +518,6 @@ namespace RSGymPT_Client.Class
                     optionRequest[i] = menuRequest[i, 0];
                 }
 
-                Request request = new Request();
                 string foundedOption = Array.Find(optionRequest, e => e == choiceRequest);
                 if (foundedOption != null)
                 {
@@ -505,7 +525,7 @@ namespace RSGymPT_Client.Class
                     switch (choiceRequest)
                     {
                         case "0":
-                            // Return Menu;
+                            ReturnMenu();
                             loopRequest = true;
                             break;
                         case "1":
@@ -538,7 +558,88 @@ namespace RSGymPT_Client.Class
                 }
             }
         }
-                  
+
+        internal static void MenuLocation()
+        {
+            Console.Clear();
+            Utility.WriteTitle("Location");
+
+            Validation.ShowLoggedUser();
+
+            Console.WriteLine("Choose one of the following options: \n");
+
+            string[,] menuLocal = new string[3, 2]
+                {
+                    {"1", " - Create new Location" },
+                    {"2", " - View Locations" },
+                    {"0", " - Return to Main Menu" },
+                };
+
+            for (int row = 0; row < menuLocal.GetLength(0); row++)
+            {
+                for (int col = 0; col < menuLocal.GetLength(1); col++)
+                {
+                    Console.Write(menuLocal[row, col]);
+                }
+                Console.WriteLine();
+            }
+
+            bool loopLocal = false;
+            while (!loopLocal)
+            {
+                string choiceLocal = Console.ReadLine();
+
+                string[] optionLocal = new string[menuLocal.GetLength(0)];
+                for (int i = 0; i < menuLocal.GetLength(0); i++)
+                {
+                    optionLocal[i] = menuLocal[i, 0];
+                }
+
+                string foundedOption = Array.Find(optionLocal, e => e == choiceLocal);
+                switch (choiceLocal)
+                {
+                    case "0":
+                        Console.Clear();
+                        MenuApp();
+                        loopLocal = true;
+                        break;
+                    case "1":
+                        Console.Clear();
+
+                        LocationRepository.CreateNewLocation();
+
+                        ReturnMenu();
+                        loopLocal = true;
+                        break;
+                    case "2":
+                        Console.Clear();
+
+                        LocationRepository.ReadLocation();
+
+                        ReturnMenu();
+                        loopLocal = true;
+                        break;
+                    default:
+                        Console.Write("\nInvalid option! Please try again. ");
+                        Console.ReadKey();
+
+                        Console.Clear();
+                        Utility.WriteTitle("Location");
+                        Console.WriteLine("Choose one of the following options: \n");
+                        for (int row = 0; row < menuLocal.GetLength(0); row++)
+                        {
+                            for (int col = 0; col < menuLocal.GetLength(1); col++)
+                            {
+                                Console.Write(menuLocal[row, col]);
+                            }
+                            Console.WriteLine();
+                        }
+                        loopLocal = false;
+                        break;
+                }
+            }
+        }
+
         internal static void ReturnMenu()
         {
             string selected;
@@ -558,7 +659,7 @@ namespace RSGymPT_Client.Class
                 }
             } while (selected != "x");
         }
-                  
+
         internal static void ReturnMenuRequest()
         {
             string selected;
@@ -573,7 +674,7 @@ namespace RSGymPT_Client.Class
                 }
             } while (selected != "x");
         }
-                  
+
         internal static void Logout()
         {
             Console.Write("\nPress x to Logout: ");
@@ -592,6 +693,192 @@ namespace RSGymPT_Client.Class
 
             Console.Clear();
             MenuLogin();
+        }
+
+        internal static void MenuAppCollab()        // ToDo: Este Menu é chamado quando o user que está logado é collaborator.
+                                                    // Optei, de igual, modo, por remover o Menu Location pois se o user é collaborator, não tem necessidade de aceder às funcionaliodades do módulo de Locations.
+        {
+
+            Console.Clear();
+            Utility.WriteTitle("RS GYM - Office");
+
+            Validation.ShowLoggedUser();
+
+            Console.WriteLine("Choose one of the following options: \n");
+
+            string[,] menuApp = new string[4, 2]
+                {
+                    {"1", " - Client" },
+                    {"2", " - Personal Trainer" },
+                    {"3", " - Request" },
+                    {"0", " - Logout" }
+                };
+
+            for (int row = 0; row < menuApp.GetLength(0); row++)
+            {
+                for (int col = 0; col < menuApp.GetLength(1); col++)
+                {
+                    Console.Write(menuApp[row, col]);
+                }
+                Console.WriteLine();
+            }
+
+            bool loopApp = false;
+            while (!loopApp)
+            {
+                string choiceApp = Console.ReadLine();
+
+                string[] optionApp = new string[menuApp.GetLength(0)];
+                for (int i = 0; i < menuApp.GetLength(0); i++)
+                {
+                    optionApp[i] = menuApp[i, 0];
+                }
+
+                string foundedOption = Array.Find(optionApp, e => e == choiceApp);
+                switch (choiceApp)
+                {
+                    case "1":
+                        MenuClient();
+                        loopApp = true;
+                        break;
+                    case "2":
+                        MenuPersonalTrainer();
+                        loopApp = true;
+                        break;
+                    case "3":
+                        MenuRequest();
+                        loopApp = true;
+                        break;
+                    case "0":
+                        Console.WriteLine("We're sorry to see you leaving!");
+                        Console.WriteLine("Thank you for using the RSGym App!");
+
+                        Utility.TerminateConsole();
+                        Environment.Exit(0);
+                        loopApp = true;
+                        break;
+                    default:
+                        Console.Write("\nInvalid option! Please try again. ");
+                        Console.ReadKey();
+
+                        Console.Clear();
+                        Utility.WriteTitle("RS GYM - Office");
+
+                        Console.WriteLine("Choose one of the following options: \n");
+                        for (int row = 0; row < menuApp.GetLength(0); row++)
+                        {
+                            for (int col = 0; col < menuApp.GetLength(1); col++)
+                            {
+                                Console.Write(menuApp[row, col]);
+                            }
+                            Console.WriteLine();
+                        }
+                        loopApp = false;
+                        break;
+                }
+            }
+        }
+
+        internal static void ReturnMenuCollab()
+        {
+
+            string selected;
+            do
+            {
+                Console.Write("\nPress x to return no Main Menu: ");
+                selected = Console.ReadLine();
+
+                if (selected == "x")
+                {
+                    MenuAppCollab();
+                }
+                else
+                {
+                    Console.Write("\nIf you want to return to Main Menu please press x: ");
+                    selected = Console.ReadLine();
+                }
+            } while (selected != "x");
+        }
+
+        internal static void MenuChangeStatus()
+        {
+            Console.Clear();
+            Utility.WriteTitle("Change Client Status");
+
+            Validation.ShowLoggedUser();
+
+            Console.WriteLine("Choose one of the following options: \n");
+            
+            string[,] menuStatus = new string[3, 2]
+                {
+                    {"1", " - Inactivate Client" },
+                    {"2", " - Activate Client" },
+                    {"0", " - Return Menu" },
+                };
+
+            for (int row = 0; row < menuStatus.GetLength(0); row++)
+            {
+                for (int col = 0; col < menuStatus.GetLength(1); col++)
+                {
+                    Console.Write(menuStatus[row, col]);
+                }
+                Console.WriteLine();
+            }
+
+            bool loopStatus = false;
+            while (!loopStatus)
+            {
+                string choiceStatus = Console.ReadLine();
+
+                string[] optionStatus = new string[menuStatus.GetLength(0)];
+                for (int i = 0; i < menuStatus.GetLength(0); i++)
+                {
+                    optionStatus[i] = menuStatus[i, 0];
+                }
+
+                string foundedOption = Array.Find(optionStatus, e => e == choiceStatus);
+                switch (choiceStatus)
+                {
+                    case "0":
+                        Console.Clear();
+                        ReturnMenu();
+                        loopStatus = true;
+                        break;
+                    case "1":
+                        Console.Clear();
+
+                        ClientRepository.InactivateClient();
+
+                        ReturnMenu();
+                        loopStatus = true;
+                        break;
+                    case "2":
+                        Console.Clear();
+
+                        ClientRepository.ActivateClient();
+
+                        ReturnMenu();
+                        loopStatus = true;
+                        break;
+                    default:
+                        Console.Write("\nInvalid option! Please try again. ");
+                        Console.ReadKey();
+
+                        Console.Clear();
+                        Utility.WriteTitle("Change Client Status");
+                        Console.WriteLine("Choose one of the following options: \n");
+                        for (int row = 0; row < menuStatus.GetLength(0); row++)
+                        {
+                            for (int col = 0; col < menuStatus.GetLength(1); col++)
+                            {
+                                Console.Write(menuStatus[row, col]);
+                            }
+                            Console.WriteLine();
+                        }
+                        loopStatus = false;
+                        break;
+                }
+            }
         }
 
     }

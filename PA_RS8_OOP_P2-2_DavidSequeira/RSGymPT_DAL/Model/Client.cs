@@ -25,7 +25,13 @@ namespace RSGymPT_DAL.Model
 
         [Required]
         [MaxLength(100, ErrorMessage = "100 character limit.")]
-        public string Name { get; set; }
+        public string FirstName { get; set; }
+
+        [Required]
+        [MaxLength(100, ErrorMessage = "100 character limit.")]
+        public string LastName { get; set; }
+
+        public string Name => $"{FirstName} {LastName}";
 
         [Required]
         [DataType(DataType.Date, ErrorMessage = "The date must be in the format dd/mm/yyyy")]

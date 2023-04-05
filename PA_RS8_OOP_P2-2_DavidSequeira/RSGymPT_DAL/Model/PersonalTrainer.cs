@@ -14,9 +14,13 @@ namespace RSGymPT_DAL.Model
         public int PersonalTrainerID { get; set; }
         public int LocationID { get; set; }
 
+        /*
         [Required]
         [StringLength(maximumLength: 4, MinimumLength = 4, ErrorMessage = "The Code must have 4 characters.")]
         public string Code { get; set; }
+        */
+
+        public string Code => $"PT0{PersonalTrainerID}";
 
         [Required]
         [MaxLength(100, ErrorMessage = "100 character limit.")]

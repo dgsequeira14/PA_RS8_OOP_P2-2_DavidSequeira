@@ -1,4 +1,5 @@
 ﻿using D00_Utility;
+using RSGymPT_Client.Class;
 using RSGymPT_DAL.Model;
 using System;
 using System.Collections.Generic;
@@ -32,6 +33,8 @@ namespace RSGymPT_Client.Repository
             Console.Clear();
             Utility.WriteTitle("List of Locations");
 
+            Validation.ShowLoggedUser();
+
             using (var db = new RSGymContext())
             {
                 var queryLocation = db.Location
@@ -45,6 +48,11 @@ namespace RSGymPT_Client.Repository
 
         public static void CreateNewLocation()
         {
+            Console.Clear();
+            Utility.WriteTitle("Create new Location");
+
+            Validation.ShowLoggedUser();
+
             Console.WriteLine("Please fill the following fields with the Location's information: \n");
 
             Console.Write("Post-Code: ");

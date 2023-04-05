@@ -18,7 +18,7 @@ namespace RSGymPT_Client
             Utility.SetUnicodeConsole();
             try
             {
-                /*
+                
                 #region Initial Data Creation
 
                 InitialData.CreateInitialData();
@@ -30,8 +30,8 @@ namespace RSGymPT_Client
                 InitialData.ReadInitialData();
 
                 #endregion
-                */
-
+                
+                
                 Utility_Menu.MenuInitial();
             }
             catch (Exception)
