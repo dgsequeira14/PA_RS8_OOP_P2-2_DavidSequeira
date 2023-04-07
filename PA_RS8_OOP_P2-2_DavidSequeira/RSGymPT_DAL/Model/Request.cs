@@ -25,7 +25,8 @@ namespace RSGymPT_DAL.Model
         public int PersonalTrainerID { get; set; }
 
         [Required]
-        [DataType(DataType.Date, ErrorMessage = "The date must be in the format dd/mm/yyyy")]
+        [DataType(DataType.Date, ErrorMessage = "The date must be in the format dd/mm/yyyy")]                            // ToDo: Tentei usar a anotação para restringir a data selecionada a partir do dia atual,
+        [Range(typeof(DateTime), "2023/04/16", "9999/12/31", ErrorMessage = "The date must be today or in the future")]  // usando o extension method DateTime.Now como valor mínimo, mas não me permitiu por não ser um valor constante.    
         public DateTime Date { get; set; }
 
         [Required]

@@ -76,7 +76,5 @@ namespace RSGymPT_Client.Class
             #endregion
         }
 
-
-
     }
 }

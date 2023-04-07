@@ -21,24 +21,29 @@ namespace RSGymPT_Client
                 
                 #region Initial Data Creation
 
-                InitialData.CreateInitialData();
+                // InitialData.CreateInitialData();
 
                 #endregion
 
                 #region List Initial Data
 
-                InitialData.ReadInitialData();
+                // InitialData.ReadInitialData();
 
                 #endregion
                 
+                #region App Initialization
                 
                 Utility_Menu.MenuInitial();
+                
+                #endregion
+
             }
             catch (Exception)
             {
 
-                Console.WriteLine("\nAn error has occurred.\nPlease report to administrator via e-mail. Thank you.");  // ToDo: Rever para que Menu retorna quando dá erro!   
+                Console.WriteLine("\nAn error has occurred.\nPlease report to administrator via e-mail. Thank you.");
                 Console.ReadKey();
+                Utility_Menu.MenuLogin();
             }
 
 

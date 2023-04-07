@@ -49,17 +49,32 @@ namespace RSGymPT_Client.Repository
         public static void CreateNewLocation()
         {
             Console.Clear();
-            Utility.WriteTitle("Create new Location");
+            Utility.WriteTitle("New Location");
 
             Validation.ShowLoggedUser();
 
             Console.WriteLine("Please fill the following fields with the Location's information: \n");
 
-            Console.Write("Post-Code: ");
-            string postCode = Console.ReadLine();
+            string postCode;
+            do
+            {
+                postCode = Validation.ValidatePostCode();
+                if (postCode == "0")
+                {
+                    Console.WriteLine("\nPost-Code already in database! Please try again.\n");
+                }
+            } while (postCode == "0");
 
-            Console.Write("City: ");
-            string city = Console.ReadLine();
+            string city;
+            do
+            {
+                city = Validation.ValidateCity();
+                if (city == "0")
+                {
+                    Console.WriteLine("\nCity already in database! Please try again.\n");
+                }
+            } while (city == "0");
+
 
             using (var db = new RSGymContext())
             {

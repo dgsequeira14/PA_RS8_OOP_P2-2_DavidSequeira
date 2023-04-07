@@ -1,4 +1,5 @@
 ﻿using D00_Utility;
+using RSGymPT_Client.Class;
 using RSGymPT_DAL.Model;
 using System;
 using System.Collections.Generic;
@@ -33,17 +34,18 @@ namespace RSGymPT_Client.Repository
 
             using (var db = new RSGymContext())
             {
+                
                 var queryRequest = db.Request
                     .Select(x => x)
                     .OrderBy(x => x.Status)
                     .ThenBy(x => x.Date)
                     .ThenBy(x => x.Hour);
-
+                
                 queryRequest.ToList().ForEach(x => Utility.WriteMessage(
                     $"ID: {x.RequestID}\n" +
-                    $"Client ID: {x.ClientID}\n" +
-                    $"Personal Trainer ID: {x.PersonalTrainerID}\n" +
-                    $"Date: {x.Date.ToShortDateString()} - Hour: {x.Hour.ToShortTimeString()}\n" +
+                    $"Client Name and (ID): {x.Client.Name} ({x.ClientID})\n" +
+                    $"Personal Trainer Name and (ID): {x.PersonalTrainer.Name} ({x.PersonalTrainerID})\n" +
+                    $"Date and Time: {x.Date.ToShortDateString()} - {x.Hour.ToShortTimeString()}\n" +
                     $"Status: {x.Status}\n" +
                     $"Observations: {x.Observation}", "", "\n\n"));
             }
@@ -52,8 +54,15 @@ namespace RSGymPT_Client.Repository
 
         public static void UpdateRequest()
         {
+            Console.Clear();
+            Utility.WriteTitle("Update Request");
+
+            Validation.ShowLoggedUser();
+
+            RequestRepository.ReadRequest();       // ToDo: Para facilitar a introdução do Request ID, mostro a lista de Requests.
+
             Console.Write("Please insert the Request ID to update: ");
-            int requestID = Convert.ToInt16(Console.ReadLine());
+            int.TryParse(Console.ReadLine(), out int requestID);
 
             using (var db = new RSGymContext())
             {
@@ -78,16 +87,20 @@ namespace RSGymPT_Client.Repository
 
                     db.SaveChanges();
                 }
-            }
-            ;
-
-
+            };
         }
 
         public static void CreateNewRequest()
         {
-            ClientRepository.ReadClient();          // ToDO: Para facilitar a introdução das FK, mostro a lista de Client e Personal Trainer
+            Console.Clear();
+            // Utility.WriteTitle("New Request");
+
+            Validation.ShowLoggedUser();
+
+            ClientRepository.ReadClient();          // ToDo: Para facilitar a introdução das FK, mostro a lista de Client e Personal Trainer
             PersonalTrainerRepository.ReadPT();
+
+            Utility.WriteTitle("New Request");
 
             Console.WriteLine("Please fill the following fields with the Request's details: \n");
 
@@ -103,6 +116,9 @@ namespace RSGymPT_Client.Repository
             Console.Write("Hour (hh:mm): ");
             DateTime hour = Convert.ToDateTime(Console.ReadLine());
 
+            Console.Write("Observations: ");
+            string obs = Console.ReadLine();
+
             using (var db = new RSGymContext())
             {
                 IList<Request> requests = new List<Request>()
@@ -113,7 +129,8 @@ namespace RSGymPT_Client.Repository
                         PersonalTrainerID = ptID,
                         Date = date,
                         Hour = hour,
-                        Status = Request.EnumStatusRequest.Booked.ToString()
+                        Status = Request.EnumStatusRequest.Booked.ToString(),
+                        Observation = obs,
                     }
                 };
 

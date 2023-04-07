@@ -4,6 +4,7 @@ using RSGymPT_DAL.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Policy;
 using System.Text;
@@ -15,7 +16,7 @@ namespace RSGymPT_Client.Class
     public class Validation
     {
         private static string loggedInUser;
-        
+
         #region User
 
         public static (string, string) ReadUserCredentials()
@@ -48,19 +49,38 @@ namespace RSGymPT_Client.Class
             loggedInUser = name;
 
             Console.Write($"\nHello {name}. Welcome to RSGym!\n");
-            // Console.ReadKey();
 
             return loggedInUser;
         }
 
         public static void ShowLoggedUser()
         {
-            // string name = Validation.LogginMessage(loggedInUser);
-
             if (loggedInUser != null)
             {
                 Console.WriteLine($"Logged in User: {loggedInUser}\n\n");
-                   
+
+            }
+        }
+
+        public static string ValidateUserCode()
+        {
+            Console.Write("Code: ");
+            string code = Console.ReadLine();
+
+            using (var db = new RSGymContext())
+            {
+                var queryCode = db.User
+                    .Select(x => x)
+                    .FirstOrDefault(x => x.Code == code);
+
+                    if (queryCode == null)
+                    {
+                        return code;
+                    }
+                    else
+                    {
+                        return "0";
+                    }
             }
         }
 
@@ -90,20 +110,66 @@ namespace RSGymPT_Client.Class
             }
         }
 
+        public static string ValidatePostCode()
+        {
+            Console.Write("Post-Code: ");
+            string postCode = Console.ReadLine();
+
+            using (var db = new RSGymContext())
+            {
+                var queryPost = db.Location
+                    .Select(x => x)
+                    .FirstOrDefault(x => x.PostCode == postCode);
+
+                if (queryPost == null) 
+                {
+                    return postCode;
+                }
+                else
+                {
+                    return "0";
+                }
+            }
+
+
+        }
+
+        public static string ValidateCity()
+        {
+            Console.Write("City: ");
+            string city = Console.ReadLine();
+
+            using (var db = new RSGymContext())
+            {
+                var queryCity = db.Location
+                    .Select(x => x)
+                    .FirstOrDefault(x => x.City == city);
+
+                if (queryCity == null)
+                {
+                    return city;
+                }
+                else
+                {
+                    return "0";
+                }
+            }
+        }
+
         #endregion
 
         #region Personal Trainer
 
         public static int ValidatePT()
         {
-            Console.Write("Personal Trainer Name: ");
+            Console.Write("Personal Trainer First Name: ");
             string name = Console.ReadLine();
 
             using (var db = new RSGymContext())
             {
                 var queryPT = db.PersonalTrainer
                     .Select(x => x)
-                    .FirstOrDefault(x => x.Name == name);
+                    .FirstOrDefault(x => x.FirstName == name);
 
                 if (queryPT != null)
                 {
@@ -115,9 +181,6 @@ namespace RSGymPT_Client.Class
                 }
             }
         }
-
-
         #endregion
-
     }
 }

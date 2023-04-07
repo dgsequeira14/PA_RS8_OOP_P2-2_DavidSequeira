@@ -3,6 +3,7 @@ using RSGymPT_Client.Class;
 using RSGymPT_DAL.Model;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -13,6 +14,7 @@ namespace RSGymPT_Client.Repository
     public class ClientRepository
     {
         public static void CreateClient()
+
         {
             using (var db = new RSGymContext())
             {
@@ -48,7 +50,7 @@ namespace RSGymPT_Client.Repository
                         $"Personal Trainer ID: {x.PersonalTrainerID}\n" +
                         $"Location ID: {x.LocationID}\n" +
                         $"Name: {x.Name}\n" +
-                        $"Date of Birth: {x.BirthDate}\n" +
+                        $"Date of Birth: {x.BirthDate.ToShortDateString()}\n" +
                         $"NIF: {x.NIF}\n" +
                         $"Phone Number: {x.PhoneNumber}\n" +
                         $"Email: {x.Email}\n" +
@@ -65,21 +67,21 @@ namespace RSGymPT_Client.Repository
 
             Validation.ShowLoggedUser();
 
-            bool loopName = false;
-            while (!loopName)
+            bool loopName = true;
+            while (loopName)
             {
-                Console.Write("Please insert the name of the client: ");
+                Console.Write("Please insert the First Name of the client: ");
                 string name = Console.ReadLine();
 
                 using (var db = new RSGymContext())
                 {
                     var queryClient = db.Client
                         .Select(x => x)
-                        .FirstOrDefault(x => x.Name.Contains(name));
+                        .FirstOrDefault(x => x.FirstName == name);
 
-                    if (queryClient != null)        // ToDo: Decidi permitir alterar o Nome para abranger situações, por exemplo, de alterações no registo civil.
+                    if (queryClient != null)
                     {
-                        Console.Write("First Name: ");    // ToDo: Rever como pedir o nome, terá de ser necessário criar campo LastName??
+                        Console.Write("First Name: ");
                         string newFirstName = Console.ReadLine();
 
                         Console.Write("Last Name: ");
@@ -92,26 +94,25 @@ namespace RSGymPT_Client.Repository
                         string newEmail = Console.ReadLine();
 
                         Console.Write("New Address: ");
-                        string newAdress = Console.ReadLine();
+                        string newAddress = Console.ReadLine();
 
                         queryClient.FirstName = newFirstName;
                         queryClient.LastName = newLastName;
                         queryClient.PhoneNumber = newPhone;
                         queryClient.Email = newEmail;
-                        queryClient.Address = newAdress;
+                        queryClient.Address = newAddress;
 
                         db.SaveChanges();
+                        loopName = false;
                     }
                     else
                     {
                         Console.WriteLine("Client not found! Please try again.\n");
-                        loopName = true;
                     }
                 }
-                loopName = false;
             }
-
         }
+
 
         public static void CreateNewClient()
         {
@@ -159,7 +160,7 @@ namespace RSGymPT_Client.Repository
             Console.Write("Last Name: ");
             string LastName = Console.ReadLine();
 
-            Console.Write("Date of Birth (dd/mm/yyy): ");
+            Console.Write("Date of Birth (dd/mm/yyyy): ");
             DateTime birthDate = Convert.ToDateTime(Console.ReadLine());
 
             Console.Write("NIF: ");

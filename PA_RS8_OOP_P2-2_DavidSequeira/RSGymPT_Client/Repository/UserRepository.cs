@@ -20,9 +20,9 @@ namespace RSGymPT_Client.Repository
             {
                 IList<User> users = new List<User>()
                 {
-                    new User() {Name = "David Sequeira", Code = "user1", Password = "password1", Profile = User.EnumProfile.Administrator},
-                    new User() {Name = "Ana Lopes", Code = "user2", Password = "password2", Profile = User.EnumProfile.Collaborator},
-                    new User() {Name = "Salvador Sequeira", Code = "user3", Password = "password3", Profile = User.EnumProfile.Collaborator}
+                    new User() {FirstName = "David", LastName = "Sequeira", Code = "user1", Password = "password1", Profile = User.EnumProfile.Administrator.ToString()},
+                    new User() {FirstName = "Ana", LastName = "Lopes", Code = "user2", Password = "password2", Profile = User.EnumProfile.Collaborator.ToString()},
+                    new User() {FirstName = "Salvador", LastName = "Sequeira", Code = "user3", Password = "password3", Profile = User.EnumProfile.Collaborator.ToString()}
                 };
 
                 db.User.AddRange(users);
@@ -51,7 +51,7 @@ namespace RSGymPT_Client.Repository
             }
         }
 
-        public static void UpdateUser()     // ToDo: Fazer loop
+        public static void UpdateUser()
         {
             Console.Clear();
             Utility.WriteTitle("Update Password");
@@ -60,29 +60,42 @@ namespace RSGymPT_Client.Repository
 
             using (var db = new RSGymContext())
             {
-                Console.Write("Please insert the Code of the User your wish to update the Password: ");
-                string code = Console.ReadLine();
-
-                Console.Write("Please insert the Password: ");
-                string password = Console.ReadLine();
-
-                var queryUser = db.User
-                    .Select(x => x)
-                    .FirstOrDefault(x => x.Code == code && x.Password == password);
-
-                if (queryUser != null)
+                bool loopUpdate = false;
+                while (!loopUpdate)
                 {
-                    Console.Write("Please insert the new Password: ");
-                    string newPassword = Console.ReadLine();
+                    Console.Write("Code of the User your wish to update the Password: ");
+                    string code = Console.ReadLine();
 
-                    queryUser.Password = newPassword;
-                    db.SaveChanges();
+                    Console.Write("Password: ");
+                    string password = Console.ReadLine();
 
+                    var queryUser = db.User
+                        .Select(x => x)
+                        .FirstOrDefault(x => x.Code == code && x.Password == password);
+
+                    if (queryUser != null)
+                    {
+                        Console.Write("New Password: ");
+                        string newPassword = Console.ReadLine();
+
+                        if (newPassword == password)
+                        {
+                            Console.WriteLine("\nNew password needs to be differente from old password.\n");
+                        }
+                        else
+                        {
+                            queryUser.Password = newPassword;
+                            db.SaveChanges();
+                            loopUpdate = true;
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("Please try again.\n");
+                        loopUpdate = false;
+                    }
                 }
-                else
-                {
-                    Console.WriteLine("Please try again.");
-                }
+
             }
 
         }
@@ -90,17 +103,27 @@ namespace RSGymPT_Client.Repository
         public static void CreateNewUser()
         {
             Console.Clear();
-            Utility.WriteTitle("Create new User");
+            Utility.WriteTitle("New User");
 
             Validation.ShowLoggedUser();
 
             Console.WriteLine("Please fill the following fields with the new User's information: \n");
 
-            Console.Write("Name: ");
-            string name = Console.ReadLine();
+            Console.Write("First Name: ");
+            string firstName = Console.ReadLine();
 
-            Console.Write("Code: ");
-            string code = Console.ReadLine();
+            Console.Write("Last Name: ");
+            string lastName = Console.ReadLine();
+
+            string code;
+            do
+            {
+                code = Validation.ValidateUserCode();
+                if (code == "0")
+                {
+                    Console.WriteLine("\nCode already exists! Plesase choose other code.\n");
+                }
+            } while (code == "0");
 
             Console.Write("Password: ");
             string password = Console.ReadLine();
@@ -111,10 +134,11 @@ namespace RSGymPT_Client.Repository
                 {
                     new User
                     {
-                        Name = name,
+                        FirstName = firstName,
+                        LastName = lastName,
                         Code = code,
                         Password = password,
-                        Profile = User.EnumProfile.Collaborator
+                        Profile = User.EnumProfile.Collaborator.ToString()
                     }
                 };
 

@@ -32,15 +32,9 @@ namespace D00_Utility
 
         public static void TerminateConsole()
         {
-
-            Console.Write("\n\nPrima qualquer tecla para sair: ");
+            Console.Write("\n\nPress any key to exit: ");
             Console.ReadKey();
             Console.Clear();
-
-            // Console.Write("Prima qualquer tecla para confirmar: ");
-            // Console.Clear();
-
-
         }
 
         public static bool ValidateNumber0(double number01)
