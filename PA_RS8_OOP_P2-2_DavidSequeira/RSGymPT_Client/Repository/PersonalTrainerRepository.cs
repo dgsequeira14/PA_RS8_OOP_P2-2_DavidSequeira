@@ -63,6 +63,7 @@ namespace RSGymPT_Client.Repository
 
             Console.WriteLine("Please fill the following fields with the Personal Trainer's information: \n");
 
+
             int locationID;
             do
             {
@@ -70,27 +71,36 @@ namespace RSGymPT_Client.Repository
                 if (locationID == 0)
                 {
                     Console.WriteLine("Location not found. You need to create a new Location first.\n");
-                    Utility_Menu.ReturnMenu();
+                    Utility_Menu.MenuNewLocation();
                 }
             } while (locationID == 0);
 
-            Console.Write("First Name: ");
-            string firstName = Console.ReadLine();
 
-            Console.Write("Last Name: ");
-            string lastName = Console.ReadLine();
+            string firstName = Validation.ValidateNameAndAddress("First Name");
 
-            Console.Write("NIF: ");
-            string nif = Console.ReadLine();
+            string lastName = Validation.ValidateNameAndAddress("Last Name");
 
-            Console.Write("Phone Number: ");
-            string phone = Console.ReadLine();
 
-            Console.Write("Email: ");
-            string email = Console.ReadLine();
+            string nif, validNIF;
+            do
+            {
+                validNIF = Validation.ValidatePhoneAndNIF("NIF");
 
-            Console.Write("Address: ");
-            string address = Console.ReadLine();
+                nif = Validation.FindNIF(validNIF);
+
+                if (nif == "0")
+                {
+                    Console.WriteLine("\nNIF already in database! Please try again\n");
+                }
+            } while (nif == "0");
+
+
+            string phone = Validation.ValidatePhoneAndNIF("Phone Number");
+
+            string email = Validation.ValidateEmail("Email");
+
+            string address = Validation.ValidateNameAndAddress("Address");
+
 
             using (var db = new RSGymContext())
             {

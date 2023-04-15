@@ -3,8 +3,10 @@ using RSGymPT_Client.Class;
 using RSGymPT_DAL.Model;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Data.Entity.Migrations;
 using System.Linq;
+using System.Runtime.Remoting.Metadata.W3cXsd2001;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
@@ -60,13 +62,14 @@ namespace RSGymPT_Client.Repository
             }
         }
 
-        public static void UpdateClient()
+        public static string UpdateClient()
         {
             Console.Clear();
             Utility.WriteTitle("Update Client Information");
 
             Validation.ShowLoggedUser();
 
+            /*
             bool loopName = true;
             while (loopName)
             {
@@ -81,20 +84,15 @@ namespace RSGymPT_Client.Repository
 
                     if (queryClient != null)
                     {
-                        Console.Write("First Name: ");
-                        string newFirstName = Console.ReadLine();
+                        string newFirstName = Validation.ValidateNameAndAddress("First Name");
 
-                        Console.Write("Last Name: ");
-                        string newLastName = Console.ReadLine();
+                        string newLastName = Validation.ValidateNameAndAddress("Last Name");
 
-                        Console.Write("New Phone Number: ");
-                        string newPhone = Console.ReadLine();
+                        string newPhone = Validation.ValidatePhoneAndNIF("New Phone Number");
 
-                        Console.Write("New Email: ");
-                        string newEmail = Console.ReadLine();
+                        string newEmail = Validation.ValidateEmail("New Email");
 
-                        Console.Write("New Address: ");
-                        string newAddress = Console.ReadLine();
+                        string newAddress = Validation.ValidateNameAndAddress("New Address");
 
                         queryClient.FirstName = newFirstName;
                         queryClient.LastName = newLastName;
@@ -110,9 +108,173 @@ namespace RSGymPT_Client.Repository
                         Console.WriteLine("Client not found! Please try again.\n");
                     }
                 }
-            }
-        }
+            } */
 
+
+            bool loopName = true;
+            while (loopName)
+            {
+                Console.Write("Please insert the First Name of the client: ");
+                string name = Console.ReadLine();
+
+                using (var db = new RSGymContext())
+                {
+                    var queryClientCount = db.Client
+                        .Where(u => u.FirstName == name).ToList();
+
+                    if (queryClientCount.Count == 1)
+                    {
+                        var queryClientFirst = db.Client
+                                .Select(x => x)
+                                .FirstOrDefault(x => x.FirstName == name);
+
+                        if (queryClientFirst != null)
+                        {
+                            string choice = Utility_Menu.MenuUpdateUser();
+
+                            switch (choice)
+                            {
+                                case "1":
+                                    string newFirstName = Validation.ValidateNameAndAddress("New First Name");
+                                    queryClientFirst.FirstName = newFirstName;
+                                    db.SaveChanges();
+
+                                    Console.WriteLine("Information updated!\n");
+                                    Console.ReadKey();
+
+                                    Utility_Menu.MenuClient();
+                                    break;
+                                case "2":
+                                    string newLastName = Validation.ValidateNameAndAddress("New Last Name");
+                                    queryClientFirst.LastName = newLastName;
+                                    db.SaveChanges();
+
+                                    Console.WriteLine("Information updated!\n");
+                                    Console.ReadKey();
+
+                                    Utility_Menu.MenuClient();
+                                    break;
+                                case "3":
+                                    string newPhone = Validation.ValidatePhoneAndNIF("New Phone Number");
+                                    queryClientFirst.PhoneNumber = newPhone;
+                                    db.SaveChanges();
+
+                                    Console.WriteLine("Information updated!\n");
+                                    Console.ReadKey();
+
+                                    Utility_Menu.MenuClient();
+                                    break;
+                                case "4":
+                                    string newEmail = Validation.ValidateEmail("New Email");
+                                    queryClientFirst.Email = newEmail;
+                                    db.SaveChanges();
+
+                                    Console.WriteLine("Information updated!\n");
+                                    Console.ReadKey();
+
+                                    Utility_Menu.MenuClient();
+                                    break;
+                                case "5":
+                                    string newAddress = Validation.ValidateNameAndAddress("New Address");
+                                    queryClientFirst.Address = newAddress;
+                                    db.SaveChanges();
+
+                                    Console.WriteLine("Information updated!\n");
+                                    Console.ReadKey();
+
+                                    Utility_Menu.MenuClient();
+                                    break;
+                                default:
+                                    Console.Write("\nInvalid option! Please try again.\n");
+                                    Console.ReadKey();
+
+                                    Utility_Menu.MenuUpdateUser();
+                                    loopName = true;
+                                    break;
+                            }
+                            loopName = false;
+                        }
+                        else
+                        {
+                            Console.WriteLine("Client not found! Please try again.\n");
+                            loopName = true;
+
+                        }
+
+                    }
+                    else if(queryClientCount.Count > 1)
+                    {
+                        Console.Write("Please insert the Last Name of the client: ");
+                        string lastName = Console.ReadLine();
+
+                        using (var db01 = new RSGymContext())
+                        {
+                            var queryClientLast = db01.Client
+                            .Select(x => x)
+                            .FirstOrDefault(x => x.LastName == lastName && x.FirstName == name);
+
+                            if (queryClientLast != null)
+                            {
+                                string choice = Utility_Menu.MenuUpdateUser();
+
+                                switch (choice)
+                                {
+                                    case "1":
+                                        string newFirstName = Validation.ValidateNameAndAddress("New First Name");
+                                        queryClientLast.FirstName = newFirstName;
+                                        db01.SaveChanges();
+
+                                        Console.WriteLine("Information updated!\n");
+                                        Console.ReadKey();
+
+                                        Utility_Menu.MenuClient();
+                                        break;
+                                    case "2":
+                                        string newLastName = Validation.ValidateNameAndAddress("New Last Name");
+                                        queryClientLast.LastName = newLastName;
+                                        db01.SaveChanges();
+                                        break;
+                                    case "3":
+                                        string newPhone = Validation.ValidatePhoneAndNIF("New Phone Number");
+                                        queryClientLast.PhoneNumber = newPhone;
+                                        db01.SaveChanges();
+                                        break;
+                                    case "4":
+                                        string newEmail = Validation.ValidateEmail("New Email");
+                                        queryClientLast.Email = newEmail;
+                                        db01.SaveChanges();
+                                        break;
+                                    case "5":
+                                        string newAddress = Validation.ValidateNameAndAddress("New Address");
+                                        queryClientLast.Address = newAddress;
+                                        db01.SaveChanges();
+                                        break;
+                                    default:
+                                        break;
+                                }
+                                loopName = false;
+                            }
+                            else
+                            {
+                                Console.WriteLine("Client not found! Please try again.\n");
+                                loopName = true;
+
+                            }
+
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("Client not found! Please try again.\n");
+                        loopName = true;
+                    }
+
+                }
+            }
+            return string.Empty;
+
+
+        }
 
         public static void CreateNewClient()
         {
@@ -123,60 +285,59 @@ namespace RSGymPT_Client.Repository
 
             Console.WriteLine("Please fill the following fields with the Client's information: \n");
 
-            int personalTrainerID = Validation.ValidatePT();
+            int personalTrainerID;
 
-            bool loopPT = false;
-            while (!loopPT)
+            do
             {
+                personalTrainerID = Validation.ValidatePT();
                 if (personalTrainerID == 0)
                 {
                     Console.WriteLine("Personal Trainer not found! Please try again.\n");
-                    Validation.ValidatePT();
-                    loopPT = false;
                 }
+            } while (personalTrainerID == 0);
 
-                loopPT = true;
-            }
 
-            int locationID = Validation.ValidateLocation();
-
-            bool loopLocal = false;
-            while (!loopLocal)
+            int locationID;
+            do
             {
+                locationID = Validation.ValidateLocation();
                 if (locationID == 0)
                 {
-                    Console.WriteLine("Location not found! Please try again.\n");
-                    Validation.ValidatePT();
-                    loopLocal = false;
+                    Console.WriteLine("Location not found. You need to create a new Location first.\n");
+                    Utility_Menu.MenuNewLocation();
                 }
-
-                loopLocal = true;
-            }
+            } while (locationID == 0);
 
 
             Console.Write("First Name: ");
-            string firstName = Console.ReadLine();
+            string firstName = Validation.ValidateNameAndAddress("First Name");
 
             Console.Write("Last Name: ");
-            string LastName = Console.ReadLine();
+            string LastName = Validation.ValidateNameAndAddress("Last Name");
 
-            Console.Write("Date of Birth (dd/mm/yyyy): ");
-            DateTime birthDate = Convert.ToDateTime(Console.ReadLine());
+            DateTime birthDate = Validation.ValidateBirthDate("Date of Birth");
 
-            Console.Write("NIF: ");
-            string nif = Console.ReadLine();
+            string nif, validNIF;
+            do
+            {
+                validNIF = Validation.ValidatePhoneAndNIF("NIF");
 
-            Console.Write("Phone Number: ");
-            string phone = Console.ReadLine();
+                nif = Validation.FindNIF(validNIF);
 
-            Console.Write("Email: ");
-            string email = Console.ReadLine();
+                if (nif == "0")
+                {
+                    Console.WriteLine("\nNIF already in database! Please try again\n");
+                }
+            } while (nif == "0");
 
-            Console.Write("Address: ");
-            string address = Console.ReadLine();
 
-            Console.Write("Observations: ");
-            string obs = Console.ReadLine();
+            string phone = Validation.ValidatePhoneAndNIF("Phone Number");
+
+            string email = Validation.ValidateEmail("Email");
+
+            string address = Validation.ValidateNameAndAddress("Address");
+
+            string obs = Validation.ValidateObs("Observations");
 
             using (var db = new RSGymContext())
             {

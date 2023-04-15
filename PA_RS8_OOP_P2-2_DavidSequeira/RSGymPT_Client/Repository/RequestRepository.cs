@@ -3,6 +3,7 @@ using RSGymPT_Client.Class;
 using RSGymPT_DAL.Model;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -34,13 +35,13 @@ namespace RSGymPT_Client.Repository
 
             using (var db = new RSGymContext())
             {
-                
+
                 var queryRequest = db.Request
                     .Select(x => x)
                     .OrderBy(x => x.Status)
                     .ThenBy(x => x.Date)
                     .ThenBy(x => x.Hour);
-                
+
                 queryRequest.ToList().ForEach(x => Utility.WriteMessage(
                     $"ID: {x.RequestID}\n" +
                     $"Client Name and (ID): {x.Client.Name} ({x.ClientID})\n" +
@@ -69,18 +70,16 @@ namespace RSGymPT_Client.Repository
                 var queryRequest = db.Request
                     .Select(x => x)
                     .FirstOrDefault(x => x.RequestID == requestID);
-                
+
                 if (queryRequest != null)
                 {
                     Console.Write("PT ID: ");
-                    int newPT = Convert.ToInt16(Console.ReadLine());
+                    int.TryParse(Console.ReadLine(), out int newPT);
 
-                    Console.Write("Date (dd/mm/yyyy): ");
-                    DateTime newDate = Convert.ToDateTime(Console.ReadLine());
+                    DateTime newDate = Validation.ValidateDate("Date");
 
-                    Console.Write("Hour (hh:mm): ");
-                    DateTime newHour = Convert.ToDateTime(Console.ReadLine());
-                    
+                    DateTime newHour = Validation.ValidateHour("Hour");
+
                     queryRequest.PersonalTrainerID = newPT;
                     queryRequest.Date = newDate;
                     queryRequest.Hour = newHour;
@@ -93,7 +92,6 @@ namespace RSGymPT_Client.Repository
         public static void CreateNewRequest()
         {
             Console.Clear();
-            // Utility.WriteTitle("New Request");
 
             Validation.ShowLoggedUser();
 
@@ -106,18 +104,15 @@ namespace RSGymPT_Client.Repository
 
             Console.Write("Client ID: ");
             int.TryParse(Console.ReadLine(), out int clientID);
-            
+
             Console.Write("PT ID: ");
             int.TryParse(Console.ReadLine(), out int ptID);
 
-            Console.Write("Date (dd/mm/yyyy): ");
-            DateTime date = Convert.ToDateTime(Console.ReadLine());
+            DateTime date = Validation.ValidateDate("Date");
 
-            Console.Write("Hour (hh:mm): ");
-            DateTime hour = Convert.ToDateTime(Console.ReadLine());
+            DateTime hour = Validation.ValidateHour("Hour");
 
-            Console.Write("Observations: ");
-            string obs = Console.ReadLine();
+            string obs = Validation.ValidateObs("Observations");
 
             using (var db = new RSGymContext())
             {

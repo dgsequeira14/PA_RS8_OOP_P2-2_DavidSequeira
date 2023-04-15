@@ -56,6 +56,7 @@ namespace RSGymPT_Client.Repository
             Console.WriteLine("Please fill the following fields with the Location's information: \n");
 
             string postCode;
+
             do
             {
                 postCode = Validation.ValidatePostCode();
@@ -66,6 +67,7 @@ namespace RSGymPT_Client.Repository
             } while (postCode == "0");
 
             string city;
+
             do
             {
                 city = Validation.ValidateCity();

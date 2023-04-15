@@ -1158,5 +1158,141 @@ namespace RSGymPT_Client.Class
             }
         }
 
+        internal static void MenuNewLocation()
+        {
+            Console.WriteLine("\nWould you like to create a new Location?");
+            string[,] menuNewLocation = new string[2, 2]
+                {
+                    {"\n1", " - Yes" },
+                    {"2", " - No" }
+                };
+
+            for (int row = 0; row < menuNewLocation.GetLength(0); row++)
+            {
+                for (int col = 0; col < menuNewLocation.GetLength(1); col++)
+                {
+                    Console.Write(menuNewLocation[row, col]);
+                }
+                Console.WriteLine();
+            }
+
+            bool loopNewLocation = false;
+            while (!loopNewLocation)
+            {
+                string choiceNewLocation = Console.ReadLine();
+
+                string[] optionNewLocation = new string[menuNewLocation.GetLength(0)];
+                for (int i = 0; i < menuNewLocation.GetLength(0); i++)
+                {
+                    optionNewLocation[i] = menuNewLocation[i, 0];
+                }
+
+                string foundedOption = Array.Find(optionNewLocation, e => e == choiceNewLocation);
+                switch (choiceNewLocation)
+                {
+                    case "1":
+                        Console.Clear();
+
+                        LocationRepository.CreateNewLocation();
+
+                        ReturnMenu();
+                        loopNewLocation = true;
+                        break;
+                    case "2":
+                        ReturnMenu();
+                        loopNewLocation = true;
+                        break;
+                    default:
+                        Console.Write("\nInvalid option! Please try again. ");
+                        Console.ReadKey();
+
+                        Console.Clear();
+                        Console.WriteLine("\nWould you like to create a new Location?");
+                        for (int row = 0; row < menuNewLocation.GetLength(0); row++)
+                        {
+                            for (int col = 0; col < menuNewLocation.GetLength(1); col++)
+                            {
+                                Console.Write(menuNewLocation[row, col]);
+                            }
+                            Console.WriteLine();
+                        }
+                        loopNewLocation = false;
+                        break;
+                }
+            }
+        }
+
+        internal static string MenuUpdateUser()
+        {
+            Console.WriteLine("\nWhich information would you like to update: \n");
+            string[,] menuUpdateUser = new string[6, 2]
+                {
+                    {"1", " - First Name" },
+                    {"2", " - Last Name" },
+                    {"3", " - Phone Number" },
+                    {"4", " - Email" },
+                    {"5", " - Address" },
+                    {"0", " - Return Menu" }
+                };
+
+            for (int row = 0; row < menuUpdateUser.GetLength(0); row++)
+            {
+                for (int col = 0; col < menuUpdateUser.GetLength(1); col++)
+                {
+                    Console.Write(menuUpdateUser[row, col]);
+                }
+                Console.WriteLine();
+            }
+
+            bool loop = false;
+            while (!loop)
+            {
+                string choiceUpdate = Console.ReadLine();
+
+                string[] optionUpdate = new string[menuUpdateUser.GetLength(0)];
+                for (int i = 0; i < menuUpdateUser.GetLength(0); i++)
+                {
+                    optionUpdate[i] = menuUpdateUser[i, 0];
+                }
+
+                string foundedOption = Array.Find(optionUpdate, e => e == choiceUpdate);
+                switch (choiceUpdate)
+                {
+                    case "0":
+                        return "0";   
+                    case "1":
+                        return "1";
+                    case "2":
+                        return "2";
+                    case "3":
+                        return "3";
+                    case "4":
+                        return "4";
+                    case "5":
+                        return "5";
+                    default:
+                        Console.Write("\nInvalid option! Please try again. ");
+                        Console.ReadKey();
+
+                        Console.Clear();
+                        Utility.WriteTitle("Update Client Information");
+
+                        Console.WriteLine("Which information would you like to update: \n");
+                        for (int row = 0; row < menuUpdateUser.GetLength(0); row++)
+                        {
+                            for (int col = 0; col < menuUpdateUser.GetLength(1); col++)
+                            {
+                                Console.Write(menuUpdateUser[row, col]);
+                            }
+                            Console.WriteLine();
+                        }
+                        loop = false;
+                        break;
+                                               
+                }
+            }
+
+            return "0";
+        }
     }
 }

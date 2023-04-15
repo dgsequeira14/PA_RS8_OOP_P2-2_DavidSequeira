@@ -60,15 +60,15 @@ namespace RSGymPT_Client.Repository
 
             using (var db = new RSGymContext())
             {
+                Console.Write("Code of the User your wish to update the Password: ");
+                string code = Console.ReadLine();
+
+                Console.Write("Password: ");
+                string password = Console.ReadLine();
+
                 bool loopUpdate = false;
                 while (!loopUpdate)
                 {
-                    Console.Write("Code of the User your wish to update the Password: ");
-                    string code = Console.ReadLine();
-
-                    Console.Write("Password: ");
-                    string password = Console.ReadLine();
-
                     var queryUser = db.User
                         .Select(x => x)
                         .FirstOrDefault(x => x.Code == code && x.Password == password);
@@ -76,11 +76,11 @@ namespace RSGymPT_Client.Repository
                     if (queryUser != null)
                     {
                         Console.Write("New Password: ");
-                        string newPassword = Console.ReadLine();
+                        string newPassword = Validation.ValidatePassword("New Password");
 
                         if (newPassword == password)
                         {
-                            Console.WriteLine("\nNew password needs to be differente from old password.\n");
+                            Console.WriteLine("New password needs to be different from old password.\n");
                         }
                         else
                         {
@@ -115,18 +115,21 @@ namespace RSGymPT_Client.Repository
             Console.Write("Last Name: ");
             string lastName = Console.ReadLine();
 
-            string code;
+            string code, validCode;
             do
             {
-                code = Validation.ValidateUserCode();
+                validCode = Validation.ValidateCode();
+
+                code = Validation.FindCode(validCode);
+
                 if (code == "0")
                 {
-                    Console.WriteLine("\nCode already exists! Plesase choose other code.\n");
+                    Console.WriteLine("Code already exists! Plesase choose other code.\n");
                 }
             } while (code == "0");
 
             Console.Write("Password: ");
-            string password = Console.ReadLine();
+            string password = Validation.ValidatePassword("Password");
 
             using (var db = new RSGymContext())
             {
