@@ -1,29 +1,19 @@
 ﻿using D00_Utility;
-using RSGymPT_Client.Repository;
-using RSGymPT_DAL.Migrations;
 using RSGymPT_DAL.Model;
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Net.Mail;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Security.Cryptography.X509Certificates;
-using System.Security.Policy;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 
 namespace RSGymPT_Client.Class
 {
-    public class Validation
+    public class Validation     // ToDo: Esta classe contém um conjunto de métodos aos quais eu recorro para processos de validação e pesquisa de dados.
     {
         private static string loggedInUser;
 
         #region User
 
-        public static (string, string) ReadUserCredentials()
+        public static (string, string) ReadUserCredentials()        // ToDo: Este método devolve um Tupple cque vai ser posteriomente utilizado no método ValidateUserCredentials().
         {
             Console.Clear();
             Utility.WriteTitle("Login Menu");
@@ -35,9 +25,9 @@ namespace RSGymPT_Client.Class
             string password = Console.ReadLine();
 
             return (userName, password);
-        }
+        }      
 
-        public static User ValidateUserCredentials((string, string) credentials)
+        public static User ValidateUserCredentials((string, string) credentials)        // ToDo: Este método devolve um object do tipo User para poder ser utilizado no MenuLogin.
         {
             using (var db = new RSGymContext())
             {
@@ -66,9 +56,9 @@ namespace RSGymPT_Client.Class
             }
         }
 
-        public static string ValidateCode()
+        public static string ValidateCode()             // ToDo: Neste método recorro à utilização de RegEx para colocar restrições, neste caso, ao Code.
         {
-            Regex regex = new Regex("^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{4,6}$");
+            Regex regex = new Regex("^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{4,6}$");   // ToDo: Neste Regex valida-se as restrições: 4 a 6 caracteres, tem de conter pelo menos uma letra e um núemro e não pode conter caracteres especiais.
             string code;
 
             do
@@ -135,9 +125,60 @@ namespace RSGymPT_Client.Class
 
         #endregion
 
+        #region Client
+
+        public static int ValidateClient()
+        {
+            Console.Write("Please insert the First Name of the client: ");
+            string name = Console.ReadLine();
+
+            using (var db = new RSGymContext())
+            {
+                var queryClientCount = db.Client
+                    .Where(u => u.FirstName == name).ToList();
+
+                if (queryClientCount.Count == 1)
+                {
+                    var queryClientFirst = db.Client
+                            .Select(x => x)
+                            .FirstOrDefault(x => x.FirstName == name);
+
+                    if (queryClientFirst != null)
+                    {
+                        return queryClientFirst.ClientID;
+                    }
+                }
+                else if (queryClientCount.Count > 1)
+                {
+                    Console.Write("Please insert the Last Name of the client: ");
+                    string lastName = Console.ReadLine();
+
+                    using (var db01 = new RSGymContext())
+                    {
+                        var queryClientLast = db01.Client
+                            .Select(x => x)
+                            .FirstOrDefault(x => x.LastName == lastName && x.FirstName == name);
+
+                        if (queryClientLast != null)
+                        {
+                            return queryClientLast.ClientID;
+                        }
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Client not found! Please try again.\n");
+                }
+
+                return 0;
+            }
+        }
+       
+        #endregion
+
         #region Location
 
-        public static int ValidateLocation()
+        public static int ValidateLocation()        // ToDo: Para obter LocationID, solicito o nome da cidade e depois procuro para chegar ao ID.
         {
             Console.Write("City: ");
             string city = Console.ReadLine();
@@ -159,11 +200,8 @@ namespace RSGymPT_Client.Class
             }
         }
 
-        public static string ValidatePostCode()
+        public static string FindPostCode(string postCode)
         {
-            Console.Write("Post-Code: ");
-            string postCode = Console.ReadLine();
-
             using (var db = new RSGymContext())
             {
                 var queryPost = db.Location
@@ -179,8 +217,29 @@ namespace RSGymPT_Client.Class
                     return "0";
                 }
             }
+        }
 
+        public static string ValidatePostCode(string prompt)
+        {
+            Regex regex = new Regex("^\\d{4}-\\d{3}$");     // ToDo: Neste Regex valida-se as restrições necessárias a um código-postal.
+            string postCode;
 
+            Console.Write($"{prompt}: ");
+
+            do
+            {
+                postCode = Console.ReadLine();
+
+                if (regex.IsMatch(postCode))
+                {
+                    return postCode;
+                }
+                else
+                {
+                    Console.WriteLine($"{prompt} in the wrong format. Please try again.\n");
+                    Console.Write($"{prompt}: ");
+                }
+            } while (true);
         }
 
         public static string ValidateCity()
@@ -209,9 +268,9 @@ namespace RSGymPT_Client.Class
 
         #region Personal Trainer
 
-        public static int ValidatePT()
+        public static int ValidatePT()                  // ToDo: Para obter PersonalTrainerID, solicito o nome do PT e depois procuro para chegar ao ID.
         {
-            Console.Write("Personal Trainer First Name: ");
+            Console.Write("\nPersonal Trainer First Name: ");         // ToDo: Tentei que este método permitisse procurar sem caratéres especiais, mas não consegui chegar a uma solução.
             string name = Console.ReadLine();
 
             using (var db = new RSGymContext())
@@ -235,42 +294,74 @@ namespace RSGymPT_Client.Class
 
         #region Find and Validate Input Data
 
-        public static string ValidateNameAndAddress(string prompt)
+        public static string ValidateName(string prompt)
         {
+            Regex regex = new Regex(@"^(?=.{1,100}$)[A-Za-z ]+$");      // ToDo: Neste Regex valida-se as restrições: máximo 100 caracteres, não pode conter números e pode conter espaços e caracteres especiais.
+            string name;
+
             Console.Write($"{prompt}: ");
-            string text;
 
             do
             {
-                text = Console.ReadLine();
+                name = Console.ReadLine();
 
-                if (text.Length > 100)
+                if (regex.IsMatch(name))
+                {
+                    return name;
+                }
+                else
+                {
+                    Console.WriteLine("Name can only have letters. Please try again.\n");
+                    Console.Write($"{prompt}: ");
+                }
+
+            } while (!regex.IsMatch(name));
+
+            return name;
+        }
+
+        public static string ValidateAddress(string prompt)
+        {
+            Console.Write($"{prompt}: ");
+            string address;
+
+            do
+            {
+                address = Console.ReadLine();
+
+                if (address.Length > 100)
                 {
                     Console.WriteLine($"{prompt} must have less than 100 characters. Please try again.\n");
                     Console.Write($"{prompt}: ");
                 }
             }
-            while (text.Length > 100);
+            while (address.Length > 100);
 
-            return text;
+            return address;
         }
 
-        public static string ValidatePhoneAndNIF(string prompt)
+        public static string ValidatePhoneAndNIF(string prompt)     
         {
             Console.Write($"{prompt}: ");
             string text;
+
+            Regex regex = new Regex(@"^\d{9}$");            // ToDo: Neste Regex valida-se as restrições: exatamente 9 caracteres e só pode conter números
 
             do
             {
                 text = Console.ReadLine();
 
-                if (text.Length != 9)
+                if (regex.IsMatch(text))
                 {
-                    Console.WriteLine($"{prompt} must have 9 characters. Please try again.\n ");
+                    return text;
+                }
+                else
+                {
+                    Console.WriteLine($"{prompt} must have 9 numbers, no spaces and no special characters. Please try again.\n ");
                     Console.Write($"{prompt}: ");
                 }
             }
-            while (text.Length != 9);
+            while (!regex.IsMatch(text));
 
             return text;
         }
@@ -307,7 +398,7 @@ namespace RSGymPT_Client.Class
                 birthDate = Convert.ToDateTime(Console.ReadLine());
                 age = DateTime.Now.Year - birthDate.Year;
 
-                if (birthDate > DateTime.Today)
+                if (birthDate > DateTime.Today)     // ToDo: Neste método calculo a idade para poder restringir a idade do cliente
                 {
                     Console.WriteLine("Please wait until client is born to register!\n");
                     Console.Write($"{prompt} (dd/mm/yyyy): ");
@@ -327,7 +418,7 @@ namespace RSGymPT_Client.Class
         {
             Console.Write($"{prompt}: ");
 
-            Regex regex = new Regex(@"^[^\s@]+@[^\s@]+\.[^\s@]+$");
+            Regex regex = new Regex(@"^[^\s@]+@[^\s@]+\.[^\s@]+$");         // ToDo: Neste Regex valida-se as restrições associadas a um endereço de email.
             string email;
 
             do
@@ -351,27 +442,28 @@ namespace RSGymPT_Client.Class
 
         public static DateTime ValidateDate(string prompt)
         {
-            Console.Write($"{prompt} (dd/mm/yyyy): ");
-
             DateTime dateTimeNow = DateTime.Now;
             DateTime date;
 
-            string requestDate;
+            string requestDate;         // ToDo: Neste processo utilizo o método TryParseExact para validar corretamente uma data: o primeiro parâmetro corresponde à string obtida da consola, o segundo corresponde ao formato,
+                                                // o terceiro parâmetro corresponde à class System.Globalization e tem como função a remoção de qualquer dependência de uma CultureInfo, vai depender da CultureInfo da consola de onde vem o input,
+                                                // o quarto parâmetro corresponde ao estilo do input, por exemplo se permite que o utilizador escreva espaços em branco,
+                                                // o último parâmetro é o valor que será devolvido caso o TryParseExact tenha um resultado positivo.
 
             do
             {
                 Console.Write($"{prompt} (dd/mm/yyyy): ");
                 requestDate = Console.ReadLine();
 
-                if (DateTime.TryParseExact(requestDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out date))
+                if (DateTime.TryParseExact(requestDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out date))     
                 {
-                    if (date < dateTimeNow)
+                    if (date >= dateTimeNow.Date)
                     {
-                        Console.WriteLine("I am sorry, you cannot book appointments in the past!\nPlease try again.\n");
+                        return date;
                     }
                     else
                     {
-                        return date;
+                        Console.WriteLine("I am sorry, you cannot book appointments in the past!\nPlease try again.\n");
                     }
                 }
                 else
@@ -385,8 +477,6 @@ namespace RSGymPT_Client.Class
 
         public static DateTime ValidateHour(string prompt)
         {
-            Console.Write($"{prompt} (hh:mm): ");
-
             DateTime hour;
             TimeSpan start = new TimeSpan(6, 0, 0);
             TimeSpan end = new TimeSpan(21, 0, 0);
@@ -398,10 +488,10 @@ namespace RSGymPT_Client.Class
                 Console.Write($"{prompt} (hh:mm): ");
                 requestHour = Console.ReadLine();
 
-                if (DateTime.TryParseExact(requestHour, "HH:mm", CultureInfo.CurrentCulture, DateTimeStyles.None, out hour))
+                if (DateTime.TryParseExact(requestHour, "HH:mm", CultureInfo.CurrentCulture, DateTimeStyles.None, out hour))    // ToDo: Nesta situação usei o mesmo processo do ValidateDate.
                 {
-                    if (hour.TimeOfDay < start || hour.TimeOfDay > end)
-                    {
+                    if (hour.TimeOfDay < start || hour.TimeOfDay > end)         // ToDo: Criei duas variàveis com TimeSpan para restringir as marcações de aula entre as 06:00 e as 21:00. 
+                   {
                         Console.WriteLine("I am sorry, appointments can only be booked between 6 and 21!\nPlease try again.\n");
                     }
                     else
@@ -414,8 +504,6 @@ namespace RSGymPT_Client.Class
                     Console.WriteLine("Invalid hour format! Please try again\n");
                 }
             } while (true);
-
-            // return hour;
         }
 
         public static string FindNIF(string nif)
@@ -440,6 +528,7 @@ namespace RSGymPT_Client.Class
         #endregion
 
     }
-
-
 }
+
+
+

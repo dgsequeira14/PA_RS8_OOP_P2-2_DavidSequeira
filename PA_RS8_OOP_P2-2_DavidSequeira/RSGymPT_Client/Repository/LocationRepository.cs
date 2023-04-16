@@ -4,8 +4,6 @@ using RSGymPT_DAL.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RSGymPT_Client.Repository
 {
@@ -55,11 +53,13 @@ namespace RSGymPT_Client.Repository
 
             Console.WriteLine("Please fill the following fields with the Location's information: \n");
 
-            string postCode;
+            string postCode, validPostCode;
 
             do
             {
-                postCode = Validation.ValidatePostCode();
+                validPostCode = Validation.ValidatePostCode("Post-Code");       // ToDo: Para a inserção do Post-Code, inicialmente valido se o formato é correcto e depois procuro na base de dados para verificar se já existe, evitando a inserção de Post-Code repetidos.
+                postCode = Validation.FindPostCode(validPostCode);
+
                 if (postCode == "0")
                 {
                     Console.WriteLine("\nPost-Code already in database! Please try again.\n");
@@ -70,7 +70,7 @@ namespace RSGymPT_Client.Repository
 
             do
             {
-                city = Validation.ValidateCity();
+                city = Validation.ValidateCity();       // ToDo: Este método vai validar a existência da City na base de dados.
                 if (city == "0")
                 {
                     Console.WriteLine("\nCity already in database! Please try again.\n");

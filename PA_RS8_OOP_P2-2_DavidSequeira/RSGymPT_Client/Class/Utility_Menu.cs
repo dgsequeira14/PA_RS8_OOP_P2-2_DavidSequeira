@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using D00_Utility;
+﻿using D00_Utility;
 using RSGymPT_Client.Repository;
 using RSGymPT_DAL.Model;
+using System;
 
 namespace RSGymPT_Client.Class
 {
@@ -497,10 +493,11 @@ namespace RSGymPT_Client.Class
 
                 Console.WriteLine("Choose one of the following options: \n");
 
-                string[,] menuRequest = new string[3, 2]
+                string[,] menuRequest = new string[4, 2]
                     {
                         {"1", " - Create new Request" },
                         {"2", " - View Requests" },
+                        {"3", " - Update Request" },
                         {"0", " - Return to Main Menu" }
                     };
 
@@ -545,6 +542,11 @@ namespace RSGymPT_Client.Class
                             RequestRepository.ReadRequest();
 
                             ReturnMenuRequest();
+                            loopRequest = false;
+                            break;
+                        case "3":
+                            Console.Clear();
+                            RequestRepository.UpdateRequest();
                             loopRequest = false;
                             break;
                         default:
@@ -709,12 +711,13 @@ namespace RSGymPT_Client.Class
 
             Console.WriteLine("Choose one of the following options: \n");
 
-            string[,] menuApp = new string[4, 2]
+            string[,] menuApp = new string[5, 2]
                 {
                     {"1", " - Client" },
                     {"2", " - Personal Trainer" },
                     {"3", " - Request" },
-                    {"0", " - Logout" }
+                    {"4", " - Logout" },
+                    {"0", " - Exit App" }
                 };
 
             for (int row = 0; row < menuApp.GetLength(0); row++)
@@ -752,8 +755,14 @@ namespace RSGymPT_Client.Class
                         MenuRequestCollab();
                         loopApp = true;
                         break;
-                    case "0":
+                    case "4":
                         Logout();
+                        break;
+                    case "0":
+                        Console.WriteLine("\nWe're sorry to see you leaving!");
+                        Console.WriteLine("Thank you for using the RSGym App!");
+                        Utility.TerminateConsole();
+                        Environment.Exit(0);
                         loopApp = true;
                         break;
                     default:
@@ -876,7 +885,7 @@ namespace RSGymPT_Client.Class
                         break;
                 }
             }
-        }       
+        }
 
         internal static void MenuPersonalTrainerCollab()
         {
@@ -971,10 +980,11 @@ namespace RSGymPT_Client.Class
 
                 Console.WriteLine("Choose one of the following options: \n");
 
-                string[,] menuRequest = new string[3, 2]
+                string[,] menuRequest = new string[4, 2]
                     {
                         {"1", " - Create new Request" },
                         {"2", " - View Requests" },
+                        {"3", " - Update Request" },
                         {"0", " - Return to Main Menu" }
                     };
 
@@ -1019,6 +1029,11 @@ namespace RSGymPT_Client.Class
                             RequestRepository.ReadRequest();
 
                             ReturnMenuRequestCollab();
+                            loopRequest = false;
+                            break;
+                        case "3":
+                            Console.Clear();
+                            RequestRepository.UpdateRequest();
                             loopRequest = false;
                             break;
                         default:
@@ -1085,7 +1100,7 @@ namespace RSGymPT_Client.Class
             Validation.ShowLoggedUser();
 
             Console.WriteLine("Choose one of the following options: \n");
-            
+
             string[,] menuStatus = new string[3, 2]
                 {
                     {"1", " - Inactivate Client" },
@@ -1222,7 +1237,7 @@ namespace RSGymPT_Client.Class
             }
         }
 
-        internal static string MenuUpdateUser()
+        internal static string MenuUpdateClient()
         {
             Console.WriteLine("\nWhich information would you like to update: \n");
             string[,] menuUpdateUser = new string[6, 2]
@@ -1259,7 +1274,7 @@ namespace RSGymPT_Client.Class
                 switch (choiceUpdate)
                 {
                     case "0":
-                        return "0";   
+                        return "0";
                     case "1":
                         return "1";
                     case "2":
@@ -1288,11 +1303,12 @@ namespace RSGymPT_Client.Class
                         }
                         loop = false;
                         break;
-                                               
+
                 }
             }
 
             return "0";
         }
+
     }
 }

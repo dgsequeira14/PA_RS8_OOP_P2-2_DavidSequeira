@@ -1,14 +1,9 @@
-﻿using RSGymPT_DAL.Model;
+﻿using D00_Utility;
+using RSGymPT_Client.Class;
+using RSGymPT_DAL.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using D00_Utility;
-using System.Collections.Specialized;
-using System.Data.Common;
-using System.ComponentModel.Design;
-using RSGymPT_Client.Class;
 
 namespace RSGymPT_Client.Repository
 {
@@ -75,7 +70,6 @@ namespace RSGymPT_Client.Repository
 
                     if (queryUser != null)
                     {
-                        Console.Write("New Password: ");
                         string newPassword = Validation.ValidatePassword("New Password");
 
                         if (newPassword == password)
@@ -109,11 +103,9 @@ namespace RSGymPT_Client.Repository
 
             Console.WriteLine("Please fill the following fields with the new User's information: \n");
 
-            Console.Write("First Name: ");
-            string firstName = Console.ReadLine();
+            string firstName = Validation.ValidateName("First Name");
 
-            Console.Write("Last Name: ");
-            string lastName = Console.ReadLine();
+            string lastName = Validation.ValidateName("Last Name");
 
             string code, validCode;
             do
@@ -128,7 +120,6 @@ namespace RSGymPT_Client.Repository
                 }
             } while (code == "0");
 
-            Console.Write("Password: ");
             string password = Validation.ValidatePassword("Password");
 
             using (var db = new RSGymContext())

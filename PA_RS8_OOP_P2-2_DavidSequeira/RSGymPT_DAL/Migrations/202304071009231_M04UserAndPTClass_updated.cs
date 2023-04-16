@@ -3,7 +3,7 @@
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class M04UserAndPTClass_updated : DbMigration
+    public partial class M04UserAndPTClass_updated : DbMigration        // ToDo: Nesta migration, dividi a propriedade Name em First Name e Last Name, tal como aconteceu na Migration M03.
     {
         public override void Up()
         {

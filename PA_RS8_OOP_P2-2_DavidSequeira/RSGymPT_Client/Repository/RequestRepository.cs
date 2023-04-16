@@ -3,10 +3,7 @@ using RSGymPT_Client.Class;
 using RSGymPT_DAL.Model;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RSGymPT_Client.Repository
 {
@@ -60,7 +57,7 @@ namespace RSGymPT_Client.Repository
 
             Validation.ShowLoggedUser();
 
-            RequestRepository.ReadRequest();       // ToDo: Para facilitar a introdução do Request ID, mostro a lista de Requests.
+            ReadRequest();       // ToDo: Para facilitar a introdução do Request ID, mostro a lista de Requests.
 
             Console.Write("Please insert the Request ID to update: ");
             int.TryParse(Console.ReadLine(), out int requestID);
@@ -73,8 +70,7 @@ namespace RSGymPT_Client.Repository
 
                 if (queryRequest != null)
                 {
-                    Console.Write("PT ID: ");
-                    int.TryParse(Console.ReadLine(), out int newPT);
+                    int newPT = Validation.ValidatePT();
 
                     DateTime newDate = Validation.ValidateDate("Date");
 
@@ -92,21 +88,31 @@ namespace RSGymPT_Client.Repository
         public static void CreateNewRequest()
         {
             Console.Clear();
-
             Validation.ShowLoggedUser();
-
-            ClientRepository.ReadClient();          // ToDo: Para facilitar a introdução das FK, mostro a lista de Client e Personal Trainer
-            PersonalTrainerRepository.ReadPT();
 
             Utility.WriteTitle("New Request");
 
             Console.WriteLine("Please fill the following fields with the Request's details: \n");
 
-            Console.Write("Client ID: ");
-            int.TryParse(Console.ReadLine(), out int clientID);
+            int clientID;
 
-            Console.Write("PT ID: ");
-            int.TryParse(Console.ReadLine(), out int ptID);
+            do
+            {
+                clientID = Validation.ValidateClient();
+
+            } while (clientID == 0);
+
+
+            int ptID; 
+
+            do
+            {
+                ptID = Validation.ValidatePT();
+                if (ptID == 0)
+                {
+                    Console.WriteLine("Personal Trainer not found! Please try again.");
+                }
+            } while (ptID == 0);
 
             DateTime date = Validation.ValidateDate("Date");
 

@@ -71,10 +71,6 @@
     <Compile Include="Migrations\202304071104367_M05UserClass_updatedStatus.designer.cs">
       <DependentUpon>202304071104367_M05UserClass_updatedStatus.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202304071419546_M06RequestClass_updatedDate.cs" />
-    <Compile Include="Migrations\202304071419546_M06RequestClass_updatedDate.designer.cs">
-      <DependentUpon>202304071419546_M06RequestClass_updatedDate.cs</DependentUpon>
-    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Model\Client.cs" />
     <Compile Include="Model\Location.cs" />
@@ -109,9 +105,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202304071104367_M05UserClass_updatedStatus.resx">
       <DependentUpon>202304071104367_M05UserClass_updatedStatus.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202304071419546_M06RequestClass_updatedDate.resx">
-      <DependentUpon>202304071419546_M06RequestClass_updatedDate.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

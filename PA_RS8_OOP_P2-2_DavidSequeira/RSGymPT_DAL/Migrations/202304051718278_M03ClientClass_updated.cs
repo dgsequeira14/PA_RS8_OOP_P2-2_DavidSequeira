@@ -3,7 +3,7 @@
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class M03ClientClass_updated : DbMigration
+    public partial class M03ClientClass_updated : DbMigration       // ToDo: Nesta migration, tomei a decisão de dividir a propriedade Name em First Name e Last Name, mantendo a Name apenas para efeitos de listagem em consola.
     {
         public override void Up()
         {

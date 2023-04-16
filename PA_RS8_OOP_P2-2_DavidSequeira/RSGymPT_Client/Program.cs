@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using D00_Utility;
+﻿using D00_Utility;
 using RSGymPT_Client.Class;
-using RSGymPT_Client.Repository;
-using RSGymPT_DAL.Model;
+using System;
 
 
 namespace RSGymPT_Client
@@ -18,16 +12,9 @@ namespace RSGymPT_Client
             Utility.SetUnicodeConsole();
             try
             {
-
                 #region Initial Data Creation
 
-                // InitialData.CreateInitialData();
-
-                #endregion
-
-                #region List Initial Data 
-
-                // InitialData.ReadInitialData();   // ToDo: Remover!!
+                InitialData.CreateInitialData();
 
                 #endregion
 

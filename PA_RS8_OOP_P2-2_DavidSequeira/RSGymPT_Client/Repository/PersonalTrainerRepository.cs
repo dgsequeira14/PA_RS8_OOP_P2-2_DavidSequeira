@@ -4,8 +4,6 @@ using RSGymPT_DAL.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RSGymPT_Client.Repository
 {
@@ -49,8 +47,20 @@ namespace RSGymPT_Client.Repository
                     $"Phone Number: {x.PhoneNumber}\n" +
                     $"Email: {x.Email}\n" +
                     $"Address: {x.Address} \n", "", "\n\n"));
+            }
+        }
 
+        public static void ReadPTName()
+        {
+            Console.WriteLine("PT's Names:");       // ToDo: Este método foi criado para poder ser listado no ecrã uma lista simplificada (apenas com os nomes) aquando da criação de um novo Client.
 
+            using (var db = new RSGymContext())
+            {
+                var queryPT = db.PersonalTrainer
+                    .Select(x => x)
+                    .OrderBy(x => x.FirstName);
+
+                queryPT.ToList().ForEach(x => Utility.WriteMessage($"{x.Name}\n", "", ""));
             }
         }
 
@@ -64,10 +74,10 @@ namespace RSGymPT_Client.Repository
             Console.WriteLine("Please fill the following fields with the Personal Trainer's information: \n");
 
 
-            int locationID;
+            int locationID;             
             do
             {
-                locationID = Validation.ValidateLocation();
+                locationID = Validation.ValidateLocation();     // ToDo: Este processo vai pesquisar o LocationID através do nome da City. Caso não exista na base de dados a cidade terá de ser criada.
                 if (locationID == 0)
                 {
                     Console.WriteLine("Location not found. You need to create a new Location first.\n");
@@ -76,15 +86,15 @@ namespace RSGymPT_Client.Repository
             } while (locationID == 0);
 
 
-            string firstName = Validation.ValidateNameAndAddress("First Name");
+            string firstName = Validation.ValidateName("First Name");
 
-            string lastName = Validation.ValidateNameAndAddress("Last Name");
+            string lastName = Validation.ValidateName("Last Name");
 
 
             string nif, validNIF;
             do
             {
-                validNIF = Validation.ValidatePhoneAndNIF("NIF");
+                validNIF = Validation.ValidatePhoneAndNIF("NIF");       // ToDo: Para a inserção do NIF, inicialmente valido se o formato é correcto e depois procuro na base de dados para verificar se já existe, para não haver vários PT's com o mesmo NIF.
 
                 nif = Validation.FindNIF(validNIF);
 
@@ -99,7 +109,7 @@ namespace RSGymPT_Client.Repository
 
             string email = Validation.ValidateEmail("Email");
 
-            string address = Validation.ValidateNameAndAddress("Address");
+            string address = Validation.ValidateAddress("Address");
 
 
             using (var db = new RSGymContext())
